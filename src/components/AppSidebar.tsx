@@ -1,7 +1,23 @@
-import { LayoutDashboard, Plus, Bug, BarChart3, Settings, LogOut, Search } from "lucide-react";
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  Factory,
+  Truck,
+  Users,
+  Package,
+  Boxes,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Wallet,
+  Receipt,
+  UserCog,
+  BarChart3,
+  Settings,
+  LogOut,
+  BookText,
+} from "lucide-react";
 import { StackedLogo } from "./StackedLogo";
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -9,11 +25,21 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 export const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: Plus, label: "Report Bug", path: "/bugs/new" },
-  { icon: Bug, label: "All Bugs", path: "/bugs" },
-  { icon: BarChart3, label: "Analytics", path: "/analytics" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: LayoutDashboard, label: "Tổng quan", path: "/dashboard" },
+  { icon: ShoppingCart, label: "Đơn hàng", path: "/orders" },
+  { icon: Factory, label: "Sản xuất", path: "/production" },
+  { icon: Truck, label: "Giao hàng", path: "/deliveries" },
+  { icon: Users, label: "Khách hàng", path: "/customers" },
+  { icon: Package, label: "Sản phẩm", path: "/products" },
+  { icon: Boxes, label: "Vật tư", path: "/materials" },
+  { icon: ArrowDownToLine, label: "Nhập kho", path: "/stock-in" },
+  { icon: ArrowUpFromLine, label: "Xuất kho", path: "/stock-out" },
+  { icon: Wallet, label: "Thu chi", path: "/finance" },
+  { icon: Receipt, label: "Nhà cung cấp", path: "/suppliers" },
+  { icon: UserCog, label: "Nhân viên", path: "/employees" },
+  { icon: BarChart3, label: "Báo cáo", path: "/reports" },
+  { icon: BookText, label: "Nhật ký", path: "/activity" },
+  { icon: Settings, label: "Cài đặt", path: "/settings" },
 ];
 
 export function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
@@ -21,25 +47,24 @@ export function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: 
   const { profile, signOut } = useAuth();
 
   const initials = profile?.full_name
-    ? profile.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
+    ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
     : "U";
 
   return (
     <>
-      {/* Workspace header */}
       <div className="flex items-center gap-2 px-3 h-11 border-b border-sidebar-border">
         <StackedLogo size={16} color="currentColor" />
         {!collapsed && (
-          <span className="font-bold uppercase tracking-[0.08em] text-[14px] text-sidebar-accent-foreground">
-            Triage
+          <span className="font-bold uppercase tracking-[0.08em] text-[13px] text-sidebar-accent-foreground">
+            Xưởng In
           </span>
         )}
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 py-1.5 px-1.5 space-y-px">
+      <nav className="flex-1 py-1.5 px-1.5 space-y-px overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path || 
+          const isActive =
+            location.pathname === item.path ||
             (item.path !== "/" && location.pathname.startsWith(item.path));
           return (
             <Link
@@ -60,7 +85,6 @@ export function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: 
         })}
       </nav>
 
-      {/* Footer */}
       <div className="border-t border-sidebar-border p-2">
         <div className="flex items-center gap-2 px-1">
           <Avatar className="h-5 w-5">
@@ -70,7 +94,7 @@ export function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: 
           </Avatar>
           {!collapsed && (
             <span className="text-[12px] text-sidebar-foreground truncate flex-1">
-              {profile?.full_name || "User"}
+              {profile?.full_name || "Người dùng"}
             </span>
           )}
           {!collapsed && (
@@ -79,6 +103,7 @@ export function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: 
               size="icon"
               onClick={signOut}
               className="text-sidebar-foreground hover:bg-sidebar-accent h-6 w-6"
+              title="Đăng xuất"
             >
               <LogOut className="h-3 w-3" />
             </Button>
