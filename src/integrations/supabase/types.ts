@@ -271,6 +271,99 @@ export type Database = {
         }
         Relationships: []
       }
+      material_categories: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      materials: {
+        Row: {
+          avg_cost: number
+          category_id: string | null
+          code: string
+          created_at: string
+          default_supplier_id: string | null
+          id: string
+          is_active: boolean
+          min_stock: number
+          name: string
+          notes: string | null
+          thickness_mm: number | null
+          unit: string
+          updated_at: string
+          width_cm: number | null
+        }
+        Insert: {
+          avg_cost?: number
+          category_id?: string | null
+          code: string
+          created_at?: string
+          default_supplier_id?: string | null
+          id?: string
+          is_active?: boolean
+          min_stock?: number
+          name: string
+          notes?: string | null
+          thickness_mm?: number | null
+          unit?: string
+          updated_at?: string
+          width_cm?: number | null
+        }
+        Update: {
+          avg_cost?: number
+          category_id?: string | null
+          code?: string
+          created_at?: string
+          default_supplier_id?: string | null
+          id?: string
+          is_active?: boolean
+          min_stock?: number
+          name?: string
+          notes?: string | null
+          thickness_mm?: number | null
+          unit?: string
+          updated_at?: string
+          width_cm?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "materials_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "material_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "materials_default_supplier_id_fkey"
+            columns: ["default_supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           action_url: string | null
@@ -357,6 +450,114 @@ export type Database = {
         }
         Relationships: []
       }
+      purchase_receipt_items: {
+        Row: {
+          created_at: string
+          id: string
+          line_total: number
+          material_id: string
+          quantity: number
+          receipt_id: string
+          unit_cost: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          line_total?: number
+          material_id: string
+          quantity: number
+          receipt_id: string
+          unit_cost?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          line_total?: number
+          material_id?: string
+          quantity?: number
+          receipt_id?: string
+          unit_cost?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_receipt_items_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_receipt_items_receipt_id_fkey"
+            columns: ["receipt_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_receipts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      purchase_receipts: {
+        Row: {
+          code: string
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          receipt_date: string
+          status: Database["public"]["Enums"]["purchase_receipt_status"]
+          supplier_id: string | null
+          total_amount: number
+          updated_at: string
+          warehouse_id: string
+        }
+        Insert: {
+          code: string
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          receipt_date?: string
+          status?: Database["public"]["Enums"]["purchase_receipt_status"]
+          supplier_id?: string | null
+          total_amount?: number
+          updated_at?: string
+          warehouse_id: string
+        }
+        Update: {
+          code?: string
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          receipt_date?: string
+          status?: Database["public"]["Enums"]["purchase_receipt_status"]
+          supplier_id?: string | null
+          total_amount?: number
+          updated_at?: string
+          warehouse_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_receipts_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_receipts_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sequence_counters: {
         Row: {
           created_at: string
@@ -383,6 +584,102 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      stock_balances: {
+        Row: {
+          id: string
+          material_id: string
+          quantity: number
+          updated_at: string
+          warehouse_id: string
+        }
+        Insert: {
+          id?: string
+          material_id: string
+          quantity?: number
+          updated_at?: string
+          warehouse_id: string
+        }
+        Update: {
+          id?: string
+          material_id?: string
+          quantity?: number
+          updated_at?: string
+          warehouse_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_balances_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_balances_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_transactions: {
+        Row: {
+          created_at: string
+          id: string
+          material_id: string
+          notes: string | null
+          performed_by: string | null
+          quantity: number
+          ref_id: string | null
+          ref_table: string | null
+          txn_type: Database["public"]["Enums"]["stock_txn_type"]
+          unit_cost: number
+          warehouse_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          material_id: string
+          notes?: string | null
+          performed_by?: string | null
+          quantity: number
+          ref_id?: string | null
+          ref_table?: string | null
+          txn_type: Database["public"]["Enums"]["stock_txn_type"]
+          unit_cost?: number
+          warehouse_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          material_id?: string
+          notes?: string | null
+          performed_by?: string | null
+          quantity?: number
+          ref_id?: string | null
+          ref_table?: string | null
+          txn_type?: Database["public"]["Enums"]["stock_txn_type"]
+          unit_cost?: number
+          warehouse_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_transactions_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_transactions_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       suppliers: {
         Row: {
@@ -453,11 +750,68 @@ export type Database = {
         }
         Relationships: []
       }
+      warehouses: {
+        Row: {
+          address: string | null
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      confirm_purchase_receipt: {
+        Args: { _receipt_id: string }
+        Returns: {
+          code: string
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          receipt_date: string
+          status: Database["public"]["Enums"]["purchase_receipt_status"]
+          supplier_id: string | null
+          total_amount: number
+          updated_at: string
+          warehouse_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "purchase_receipts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       current_user_roles: { Args: never; Returns: string[] }
       has_role: {
         Args: {
@@ -482,6 +836,8 @@ export type Database = {
         | "accountant"
         | "delivery"
         | "customer"
+      purchase_receipt_status: "draft" | "confirmed" | "cancelled"
+      stock_txn_type: "in" | "out" | "adjust"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -620,6 +976,8 @@ export const Constants = {
         "delivery",
         "customer",
       ],
+      purchase_receipt_status: ["draft", "confirmed", "cancelled"],
+      stock_txn_type: ["in", "out", "adjust"],
     },
   },
 } as const
