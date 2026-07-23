@@ -9,6 +9,9 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { PlaceholderPage } from "@/components/PlaceholderPage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Materials from "./pages/Materials";
+import Warehouses from "./pages/Warehouses";
+import StockIn from "./pages/StockIn";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,8 +37,9 @@ const App = () => (
               <Route path="/deliveries" element={<Protected><PlaceholderPage title="Giao hàng" description="Phiếu giao và trạng thái giao hàng." /></Protected>} />
               <Route path="/customers" element={<Protected><PlaceholderPage title="Khách hàng" description="Quản lý khách hàng và cấp đại lý." /></Protected>} />
               <Route path="/products" element={<Protected><PlaceholderPage title="Sản phẩm" description="Sản phẩm, biến thể và BOM." /></Protected>} />
-              <Route path="/materials" element={<Protected><PlaceholderPage title="Nguyên vật liệu" description="Quản lý vật tư và thẻ kho." /></Protected>} />
-              <Route path="/stock-in" element={<Protected><PlaceholderPage title="Nhập kho" description="Phiếu nhập từ nhà cung cấp." /></Protected>} />
+              <Route path="/materials" element={<Protected><Materials /></Protected>} />
+              <Route path="/warehouses" element={<Protected><Warehouses /></Protected>} />
+              <Route path="/stock-in" element={<Protected><StockIn /></Protected>} />
               <Route path="/stock-out" element={<Protected><PlaceholderPage title="Xuất kho" description="Xuất vật tư cho sản xuất và điều chỉnh kho." /></Protected>} />
               <Route path="/finance" element={<Protected><PlaceholderPage title="Thu chi" description="Phiếu thu, phiếu chi, quỹ và công nợ." /></Protected>} />
               <Route path="/suppliers" element={<Protected><PlaceholderPage title="Nhà cung cấp" description="Danh sách nhà cung cấp và công nợ." /></Protected>} />

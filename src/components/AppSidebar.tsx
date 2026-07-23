@@ -32,6 +32,7 @@ export const navItems = [
   { icon: Users, label: "Khách hàng", path: "/customers" },
   { icon: Package, label: "Sản phẩm", path: "/products" },
   { icon: Boxes, label: "Vật tư", path: "/materials" },
+  { icon: Boxes, label: "Kho", path: "/warehouses" },
   { icon: ArrowDownToLine, label: "Nhập kho", path: "/stock-in" },
   { icon: ArrowUpFromLine, label: "Xuất kho", path: "/stock-out" },
   { icon: Wallet, label: "Thu chi", path: "/finance" },
