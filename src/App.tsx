@@ -12,6 +12,9 @@ import Dashboard from "./pages/Dashboard";
 import Materials from "./pages/Materials";
 import Warehouses from "./pages/Warehouses";
 import StockIn from "./pages/StockIn";
+import Products from "./pages/Products";
+import ProductBom from "./pages/ProductBom";
+import Nesting from "./pages/Nesting";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,7 +39,9 @@ const App = () => (
               <Route path="/production" element={<Protected><PlaceholderPage title="Lệnh sản xuất" description="Theo dõi và quản lý lệnh sản xuất." /></Protected>} />
               <Route path="/deliveries" element={<Protected><PlaceholderPage title="Giao hàng" description="Phiếu giao và trạng thái giao hàng." /></Protected>} />
               <Route path="/customers" element={<Protected><PlaceholderPage title="Khách hàng" description="Quản lý khách hàng và cấp đại lý." /></Protected>} />
-              <Route path="/products" element={<Protected><PlaceholderPage title="Sản phẩm" description="Sản phẩm, biến thể và BOM." /></Protected>} />
+              <Route path="/products" element={<Protected><Products /></Protected>} />
+              <Route path="/products/:id/bom" element={<Protected><ProductBom /></Protected>} />
+              <Route path="/nesting" element={<Protected><Nesting /></Protected>} />
               <Route path="/materials" element={<Protected><Materials /></Protected>} />
               <Route path="/warehouses" element={<Protected><Warehouses /></Protected>} />
               <Route path="/stock-in" element={<Protected><StockIn /></Protected>} />

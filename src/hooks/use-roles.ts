@@ -19,5 +19,7 @@ export function useRoles() {
 
   const has = (r: AppRole) => roles.includes(r);
   const canManageStock = has("admin") || has("warehouse");
-  return { roles, loading, has, canManageStock };
+  const canManageProducts = has("admin") || has("accountant") || has("sales") || has("production");
+  const canManagePrices = has("admin") || has("accountant") || has("sales");
+  return { roles, loading, has, canManageStock, canManageProducts, canManagePrices };
 }
