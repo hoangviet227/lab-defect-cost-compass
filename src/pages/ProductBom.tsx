@@ -15,7 +15,7 @@ import { useRoles } from "@/hooks/use-roles";
 type Product = { id: string; code: string; name: string; base_price: number };
 type Bom = { id: string; material_id: string; quantity: number; waste_pct: number; notes: string | null };
 type Material = { id: string; code: string; name: string; unit: string; avg_cost: number };
-type Tier = { id: string; code: string; name: string; default_discount_pct: number };
+type Tier = { id: string; code: string; name: string; discount_percent: number };
 type Price = { id?: string; tier_id: string; price: number; discount_pct: number };
 
 export default function ProductBom() {
@@ -36,7 +36,7 @@ export default function ProductBom() {
       supabase.from("products").select("id,code,name,base_price").eq("id", id).maybeSingle(),
       supabase.from("product_bom").select("*").eq("product_id", id),
       supabase.from("materials").select("id,code,name,unit,avg_cost").eq("is_active", true).order("code"),
-      supabase.from("customer_tiers").select("id,code,name,default_discount_pct").order("sort_order"),
+      supabase.from("customer_tiers").select("id,code,name,discount_percent").order("sort_order"),
       supabase.from("product_prices").select("*").eq("product_id", id),
     ]);
     setProduct(p as Product);
@@ -47,7 +47,7 @@ export default function ProductBom() {
     const existing = (pr ?? []) as Price[];
     const merged = (t ?? []).map((tier: any) => {
       const found = existing.find((x) => x.tier_id === tier.id);
-      return found || { tier_id: tier.id, price: (p as any)?.base_price ?? 0, discount_pct: tier.default_discount_pct ?? 0 };
+      return found || { tier_id: tier.id, price: (p as any)?.base_price ?? 0, discount_pct: tier.discount_percent ?? 0 };
     });
     setPrices(merged);
     setLoading(false);
