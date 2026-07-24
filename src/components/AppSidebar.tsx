@@ -15,6 +15,7 @@ import {
   Settings,
   LogOut,
   BookText,
+  Scissors,
 } from "lucide-react";
 import { StackedLogo } from "./StackedLogo";
 import { Link, useLocation } from "react-router-dom";
@@ -31,6 +32,7 @@ export const navItems = [
   { icon: Truck, label: "Giao hàng", path: "/deliveries" },
   { icon: Users, label: "Khách hàng", path: "/customers" },
   { icon: Package, label: "Sản phẩm", path: "/products" },
+  { icon: Scissors, label: "Nesting 60cm", path: "/nesting" },
   { icon: Boxes, label: "Vật tư", path: "/materials" },
   { icon: Boxes, label: "Kho", path: "/warehouses" },
   { icon: ArrowDownToLine, label: "Nhập kho", path: "/stock-in" },
