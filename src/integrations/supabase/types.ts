@@ -411,6 +411,185 @@ export type Database = {
           },
         ]
       }
+      product_bom: {
+        Row: {
+          created_at: string
+          id: string
+          material_id: string
+          notes: string | null
+          product_id: string
+          quantity: number
+          updated_at: string
+          waste_pct: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          material_id: string
+          notes?: string | null
+          product_id: string
+          quantity?: number
+          updated_at?: string
+          waste_pct?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          material_id?: string
+          notes?: string | null
+          product_id?: string
+          quantity?: number
+          updated_at?: string
+          waste_pct?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_bom_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_bom_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_categories: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      product_prices: {
+        Row: {
+          created_at: string
+          discount_pct: number
+          id: string
+          price: number
+          product_id: string
+          tier_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          discount_pct?: number
+          id?: string
+          price?: number
+          product_id: string
+          tier_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          discount_pct?: number
+          id?: string
+          price?: number
+          product_id?: string
+          tier_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_prices_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_prices_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "customer_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          base_price: number
+          category_id: string | null
+          code: string
+          created_at: string
+          created_by: string | null
+          height_cm: number | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          notes: string | null
+          unit: string
+          updated_at: string
+          width_cm: number | null
+        }
+        Insert: {
+          base_price?: number
+          category_id?: string | null
+          code: string
+          created_at?: string
+          created_by?: string | null
+          height_cm?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          unit?: string
+          updated_at?: string
+          width_cm?: number | null
+        }
+        Update: {
+          base_price?: number
+          category_id?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          height_cm?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          unit?: string
+          updated_at?: string
+          width_cm?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
