@@ -113,6 +113,51 @@ export type Database = {
         }
         Relationships: []
       }
+      cash_accounts: {
+        Row: {
+          bank_account: string | null
+          bank_name: string | null
+          code: string
+          created_at: string
+          current_balance: number
+          id: string
+          is_active: boolean
+          kind: string
+          name: string
+          notes: string | null
+          opening_balance: number
+          updated_at: string
+        }
+        Insert: {
+          bank_account?: string | null
+          bank_name?: string | null
+          code: string
+          created_at?: string
+          current_balance?: number
+          id?: string
+          is_active?: boolean
+          kind?: string
+          name: string
+          notes?: string | null
+          opening_balance?: number
+          updated_at?: string
+        }
+        Update: {
+          bank_account?: string | null
+          bank_name?: string | null
+          code?: string
+          created_at?: string
+          current_balance?: number
+          id?: string
+          is_active?: boolean
+          kind?: string
+          name?: string
+          notes?: string | null
+          opening_balance?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       customer_tiers: {
         Row: {
           code: string
@@ -271,6 +316,119 @@ export type Database = {
         }
         Relationships: []
       }
+      finance_transactions: {
+        Row: {
+          amount: number
+          cash_account_id: string
+          category: string | null
+          code: string
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          id: string
+          notes: string | null
+          order_id: string | null
+          purchase_receipt_id: string | null
+          status: string
+          supplier_id: string | null
+          txn_date: string
+          txn_type: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          cash_account_id: string
+          category?: string | null
+          code: string
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          purchase_receipt_id?: string | null
+          status?: string
+          supplier_id?: string | null
+          txn_date?: string
+          txn_type: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          cash_account_id?: string
+          category?: string | null
+          code?: string
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          purchase_receipt_id?: string | null
+          status?: string
+          supplier_id?: string | null
+          txn_date?: string
+          txn_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finance_transactions_cash_account_id_fkey"
+            columns: ["cash_account_id"]
+            isOneToOne: false
+            referencedRelation: "cash_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_transactions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_transactions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "v_customer_debts"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "finance_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_transactions_purchase_receipt_id_fkey"
+            columns: ["purchase_receipt_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_receipts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_transactions_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_transactions_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "v_supplier_debts"
+            referencedColumns: ["supplier_id"]
+          },
+        ]
+      }
       material_categories: {
         Row: {
           code: string
@@ -362,6 +520,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "materials_default_supplier_id_fkey"
+            columns: ["default_supplier_id"]
+            isOneToOne: false
+            referencedRelation: "v_supplier_debts"
+            referencedColumns: ["supplier_id"]
+          },
         ]
       }
       notifications: {
@@ -408,6 +573,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "v_customer_debts"
+            referencedColumns: ["customer_id"]
           },
         ]
       }
@@ -527,6 +699,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "v_customer_debts"
+            referencedColumns: ["customer_id"]
           },
           {
             foreignKeyName: "orders_tier_id_fkey"
@@ -950,6 +1129,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "purchase_receipts_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "v_supplier_debts"
+            referencedColumns: ["supplier_id"]
+          },
+          {
             foreignKeyName: "purchase_receipts_warehouse_id_fkey"
             columns: ["warehouse_id"]
             isOneToOne: false
@@ -1290,9 +1476,91 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_customer_debts: {
+        Row: {
+          balance: number | null
+          code: string | null
+          customer_id: string | null
+          name: string | null
+          total_orders: number | null
+          total_paid: number | null
+        }
+        Insert: {
+          balance?: never
+          code?: string | null
+          customer_id?: string | null
+          name?: string | null
+          total_orders?: never
+          total_paid?: never
+        }
+        Update: {
+          balance?: never
+          code?: string | null
+          customer_id?: string | null
+          name?: string | null
+          total_orders?: never
+          total_paid?: never
+        }
+        Relationships: []
+      }
+      v_supplier_debts: {
+        Row: {
+          balance: number | null
+          code: string | null
+          name: string | null
+          supplier_id: string | null
+          total_paid: number | null
+          total_purchases: number | null
+        }
+        Insert: {
+          balance?: never
+          code?: string | null
+          name?: string | null
+          supplier_id?: string | null
+          total_paid?: never
+          total_purchases?: never
+        }
+        Update: {
+          balance?: never
+          code?: string | null
+          name?: string | null
+          supplier_id?: string | null
+          total_paid?: never
+          total_purchases?: never
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      confirm_finance_transaction: {
+        Args: { _txn_id: string }
+        Returns: {
+          amount: number
+          cash_account_id: string
+          category: string | null
+          code: string
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          id: string
+          notes: string | null
+          order_id: string | null
+          purchase_receipt_id: string | null
+          status: string
+          supplier_id: string | null
+          txn_date: string
+          txn_type: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "finance_transactions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       confirm_order: {
         Args: { _order_id: string }
         Returns: {
