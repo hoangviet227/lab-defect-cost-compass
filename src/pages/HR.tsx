@@ -40,13 +40,22 @@ export default function HR() {
   const [periodForm, setPeriodForm] = useState({ period_month: new Date().getMonth() + 1, period_year: new Date().getFullYear() });
 
   const loadAll = async () => {
-    const [e, a, o, p] = await Promise.all([
-      supabase.from("employee_profiles").select("*").order("full_name"),
+    const [e, a, o, p, pr] = await Promise.all([
+      supabase.from("employee_profiles").select("*").order("employee_code"),
       supabase.from("attendance").select("*").order("work_date", { ascending: false }).limit(200),
       supabase.from("production_outputs").select("*").order("work_date", { ascending: false }).limit(200),
       supabase.from("payroll_periods").select("*").order("start_date", { ascending: false }),
+      supabase.from("profiles").select("user_id, full_name"),
     ]);
-    setEmps((e.data as Emp[]) ?? []);
+    const profMap = new Map((pr.data ?? []).map((r: any) => [r.user_id, r.full_name]));
+    const empRows = ((e.data as any[]) ?? []).map(r => ({ ...r, full_name: profMap.get(r.user_id) ?? null })) as Emp[];
+    setEmps(empRows);
+    setAtt((a.data as Att[]) ?? []);
+    setOuts((o.data as Out[]) ?? []);
+    const ps = (p.data as Period[]) ?? [];
+    setPeriods(ps);
+    if (ps.length && !selPeriod) setSelPeriod(ps[0].id);
+  };
     setAtt((a.data as Att[]) ?? []);
     setOuts((o.data as Out[]) ?? []);
     const ps = (p.data as Period[]) ?? [];
