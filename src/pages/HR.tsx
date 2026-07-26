@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { useRoles } from "@/hooks/use-roles";
 import { Plus, Lock } from "lucide-react";
 
-type Emp = { id: string; user_id: string | null; employee_code: string | null; full_name: string | null; job_title: string | null; base_salary: number | null; allowance: number | null; is_active: boolean | null };
+type Emp = { id: string; user_id: string | null; employee_code: string | null; base_salary: number | null; allowance: number | null; is_active: boolean | null; full_name?: string | null };
 type Att = { id: string; employee_id: string; work_date: string; check_in: string | null; check_out: string | null; hours: number; shift: string | null; notes: string | null };
 type Out = { id: string; employee_id: string; work_date: string; product_id: string | null; production_order_id: string | null; quantity: number; unit_rate: number; amount: number; notes: string | null };
 type Period = { id: string; code: string; period_month: number; period_year: number; start_date: string; end_date: string; status: string };
