@@ -21,6 +21,7 @@ import Production from "./pages/Production";
 import Customers from "./pages/Customers";
 import Suppliers from "./pages/Suppliers";
 import Reports from "./pages/Reports";
+import Finance from "./pages/Finance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,7 +53,7 @@ const App = () => (
               <Route path="/warehouses" element={<Protected><Warehouses /></Protected>} />
               <Route path="/stock-in" element={<Protected><StockIn /></Protected>} />
               <Route path="/stock-out" element={<Protected><StockOut /></Protected>} />
-              <Route path="/finance" element={<Protected><PlaceholderPage title="Thu chi" description="Phiếu thu, phiếu chi, quỹ và công nợ." /></Protected>} />
+              <Route path="/finance" element={<Protected><Finance /></Protected>} />
               <Route path="/suppliers" element={<Protected><Suppliers /></Protected>} />
               <Route path="/employees" element={<Protected><PlaceholderPage title="Nhân viên" description="Nhân viên, chấm công, sản lượng, lương." /></Protected>} />
               <Route path="/reports" element={<Protected><Reports /></Protected>} />
