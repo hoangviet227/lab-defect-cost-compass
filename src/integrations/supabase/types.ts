@@ -113,6 +113,56 @@ export type Database = {
         }
         Relationships: []
       }
+      attendance: {
+        Row: {
+          check_in: string | null
+          check_out: string | null
+          created_at: string
+          created_by: string | null
+          employee_id: string
+          hours: number
+          id: string
+          notes: string | null
+          shift: string | null
+          updated_at: string
+          work_date: string
+        }
+        Insert: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          created_by?: string | null
+          employee_id: string
+          hours?: number
+          id?: string
+          notes?: string | null
+          shift?: string | null
+          updated_at?: string
+          work_date: string
+        }
+        Update: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          created_by?: string | null
+          employee_id?: string
+          hours?: number
+          id?: string
+          notes?: string | null
+          shift?: string | null
+          updated_at?: string
+          work_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cash_accounts: {
         Row: {
           bank_account: string | null
@@ -267,6 +317,7 @@ export type Database = {
       }
       employee_profiles: {
         Row: {
+          allowance: number | null
           bank_account: string | null
           bank_name: string | null
           base_salary: number
@@ -283,6 +334,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          allowance?: number | null
           bank_account?: string | null
           bank_name?: string | null
           base_salary?: number
@@ -299,6 +351,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          allowance?: number | null
           bank_account?: string | null
           bank_name?: string | null
           base_salary?: number
@@ -716,6 +769,120 @@ export type Database = {
           },
         ]
       }
+      payroll_periods: {
+        Row: {
+          closed_at: string | null
+          closed_by: string | null
+          code: string
+          created_at: string
+          created_by: string | null
+          end_date: string
+          id: string
+          notes: string | null
+          period_month: number
+          period_year: number
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          closed_at?: string | null
+          closed_by?: string | null
+          code: string
+          created_at?: string
+          created_by?: string | null
+          end_date: string
+          id?: string
+          notes?: string | null
+          period_month: number
+          period_year: number
+          start_date: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          closed_at?: string | null
+          closed_by?: string | null
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          end_date?: string
+          id?: string
+          notes?: string | null
+          period_month?: number
+          period_year?: number
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payslips: {
+        Row: {
+          advance: number
+          allowance: number
+          base_salary: number
+          bonus: number
+          created_at: string
+          deduction: number
+          employee_id: string
+          id: string
+          net_pay: number
+          notes: string | null
+          output_amount: number
+          period_id: string
+          updated_at: string
+          worked_hours: number
+        }
+        Insert: {
+          advance?: number
+          allowance?: number
+          base_salary?: number
+          bonus?: number
+          created_at?: string
+          deduction?: number
+          employee_id: string
+          id?: string
+          net_pay?: number
+          notes?: string | null
+          output_amount?: number
+          period_id: string
+          updated_at?: string
+          worked_hours?: number
+        }
+        Update: {
+          advance?: number
+          allowance?: number
+          base_salary?: number
+          bonus?: number
+          created_at?: string
+          deduction?: number
+          employee_id?: string
+          id?: string
+          net_pay?: number
+          notes?: string | null
+          output_amount?: number
+          period_id?: string
+          updated_at?: string
+          worked_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payslips_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payslips_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_periods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_bom: {
         Row: {
           created_at: string
@@ -927,6 +1094,73 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      production_outputs: {
+        Row: {
+          amount: number | null
+          created_at: string
+          created_by: string | null
+          employee_id: string
+          id: string
+          notes: string | null
+          product_id: string | null
+          production_order_id: string | null
+          quantity: number
+          unit_rate: number
+          updated_at: string
+          work_date: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          created_by?: string | null
+          employee_id: string
+          id?: string
+          notes?: string | null
+          product_id?: string | null
+          production_order_id?: string | null
+          quantity?: number
+          unit_rate?: number
+          updated_at?: string
+          work_date: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          created_by?: string | null
+          employee_id?: string
+          id?: string
+          notes?: string | null
+          product_id?: string | null
+          production_order_id?: string | null
+          quantity?: number
+          unit_rate?: number
+          updated_at?: string
+          work_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "production_outputs_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employee_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "production_outputs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "production_outputs_production_order_id_fkey"
+            columns: ["production_order_id"]
+            isOneToOne: false
+            referencedRelation: "production_orders"
             referencedColumns: ["id"]
           },
         ]
@@ -1532,6 +1766,30 @@ export type Database = {
       }
     }
     Functions: {
+      close_payroll_period: {
+        Args: { _period_id: string }
+        Returns: {
+          closed_at: string | null
+          closed_by: string | null
+          code: string
+          created_at: string
+          created_by: string | null
+          end_date: string
+          id: string
+          notes: string | null
+          period_month: number
+          period_year: number
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payroll_periods"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       confirm_finance_transaction: {
         Args: { _txn_id: string }
         Returns: {
@@ -1658,6 +1916,7 @@ export type Database = {
         }
       }
       current_user_roles: { Args: never; Returns: string[] }
+      generate_payslips: { Args: { _period_id: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
