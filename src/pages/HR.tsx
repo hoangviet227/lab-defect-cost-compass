@@ -56,12 +56,6 @@ export default function HR() {
     setPeriods(ps);
     if (ps.length && !selPeriod) setSelPeriod(ps[0].id);
   };
-    setAtt((a.data as Att[]) ?? []);
-    setOuts((o.data as Out[]) ?? []);
-    const ps = (p.data as Period[]) ?? [];
-    setPeriods(ps);
-    if (ps.length && !selPeriod) setSelPeriod(ps[0].id);
-  };
 
   useEffect(() => { loadAll(); }, []);
   useEffect(() => {
