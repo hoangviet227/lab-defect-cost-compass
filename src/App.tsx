@@ -22,7 +22,6 @@ import Customers from "./pages/Customers";
 import Suppliers from "./pages/Suppliers";
 import Reports from "./pages/Reports";
 import Finance from "./pages/Finance";
-import Finance from "./pages/Finance";
 import HR from "./pages/HR";
 import NotFound from "./pages/NotFound";
 
@@ -57,7 +56,7 @@ const App = () => (
               <Route path="/stock-out" element={<Protected><StockOut /></Protected>} />
               <Route path="/finance" element={<Protected><Finance /></Protected>} />
               <Route path="/suppliers" element={<Protected><Suppliers /></Protected>} />
-              <Route path="/employees" element={<Protected><PlaceholderPage title="Nhân viên" description="Nhân viên, chấm công, sản lượng, lương." /></Protected>} />
+              <Route path="/employees" element={<Protected><HR /></Protected>} />
               <Route path="/reports" element={<Protected><Reports /></Protected>} />
               <Route path="/activity" element={<Protected><PlaceholderPage title="Nhật ký hệ thống" description="Lịch sử thao tác của toàn hệ thống." /></Protected>} />
               <Route path="/settings" element={<Protected><PlaceholderPage title="Cài đặt" description="Thông tin xưởng, người dùng và phân quyền." /></Protected>} />
