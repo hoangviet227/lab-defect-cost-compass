@@ -23,6 +23,7 @@ import Suppliers from "./pages/Suppliers";
 import Reports from "./pages/Reports";
 import Finance from "./pages/Finance";
 import HR from "./pages/HR";
+import Portal from "./pages/Portal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
