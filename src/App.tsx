@@ -23,6 +23,7 @@ import Suppliers from "./pages/Suppliers";
 import Reports from "./pages/Reports";
 import Finance from "./pages/Finance";
 import HR from "./pages/HR";
+import Portal from "./pages/Portal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
           <AuthProvider>
             <Routes>
               <Route path="/auth" element={<Auth />} />
+              <Route path="/portal" element={<Protected><Portal /></Protected>} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
               <Route path="/orders" element={<Protected><Orders /></Protected>} />

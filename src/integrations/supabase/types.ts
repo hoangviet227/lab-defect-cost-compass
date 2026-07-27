@@ -266,6 +266,7 @@ export type Database = {
           tier_id: string | null
           updated_at: string
           updated_by: string | null
+          user_id: string | null
         }
         Insert: {
           address?: string | null
@@ -285,6 +286,7 @@ export type Database = {
           tier_id?: string | null
           updated_at?: string
           updated_by?: string | null
+          user_id?: string | null
         }
         Update: {
           address?: string | null
@@ -304,6 +306,7 @@ export type Database = {
           tier_id?: string | null
           updated_at?: string
           updated_by?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -699,10 +702,13 @@ export type Database = {
           created_by: string | null
           customer_id: string
           delivery_date: string | null
+          design_file_url: string | null
+          design_notes: string | null
           discount: number
           id: string
           notes: string | null
           order_date: string
+          source: string
           status: Database["public"]["Enums"]["order_status"]
           subtotal: number
           tier_id: string | null
@@ -717,10 +723,13 @@ export type Database = {
           created_by?: string | null
           customer_id: string
           delivery_date?: string | null
+          design_file_url?: string | null
+          design_notes?: string | null
           discount?: number
           id?: string
           notes?: string | null
           order_date?: string
+          source?: string
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
           tier_id?: string | null
@@ -735,10 +744,13 @@ export type Database = {
           created_by?: string | null
           customer_id?: string
           delivery_date?: string | null
+          design_file_url?: string | null
+          design_notes?: string | null
           discount?: number
           id?: string
           notes?: string | null
           order_date?: string
+          source?: string
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
           tier_id?: string | null
@@ -1829,10 +1841,13 @@ export type Database = {
           created_by: string | null
           customer_id: string
           delivery_date: string | null
+          design_file_url: string | null
+          design_notes: string | null
           discount: number
           id: string
           notes: string | null
           order_date: string
+          source: string
           status: Database["public"]["Enums"]["order_status"]
           subtotal: number
           tier_id: string | null
