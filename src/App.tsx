@@ -24,6 +24,8 @@ import Reports from "./pages/Reports";
 import Finance from "./pages/Finance";
 import HR from "./pages/HR";
 import Portal from "./pages/Portal";
+import SettingsPage from "./pages/Settings";
+import Activity from "./pages/Activity";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,8 +62,8 @@ const App = () => (
               <Route path="/suppliers" element={<Protected><Suppliers /></Protected>} />
               <Route path="/employees" element={<Protected><HR /></Protected>} />
               <Route path="/reports" element={<Protected><Reports /></Protected>} />
-              <Route path="/activity" element={<Protected><PlaceholderPage title="Nhật ký hệ thống" description="Lịch sử thao tác của toàn hệ thống." /></Protected>} />
-              <Route path="/settings" element={<Protected><PlaceholderPage title="Cài đặt" description="Thông tin xưởng, người dùng và phân quyền." /></Protected>} />
+              <Route path="/activity" element={<Protected><Activity /></Protected>} />
+              <Route path="/settings" element={<Protected><SettingsPage /></Protected>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
