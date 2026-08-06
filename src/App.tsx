@@ -24,6 +24,8 @@ import Reports from "./pages/Reports";
 import Finance from "./pages/Finance";
 import HR from "./pages/HR";
 import Portal from "./pages/Portal";
+import SettingsPage from "./pages/Settings";
+import Activity from "./pages/Activity";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
