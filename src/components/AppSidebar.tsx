@@ -72,7 +72,7 @@ export function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: 
       </div>
 
       <nav className="flex-1 py-1.5 px-1.5 space-y-px overflow-y-auto">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const isActive =
             location.pathname === item.path ||
             (item.path !== "/" && location.pathname.startsWith(item.path));
