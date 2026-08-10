@@ -49,6 +49,11 @@ export const navItems = [
 export function SidebarContent({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const location = useLocation();
   const { profile, signOut } = useAuth();
+  const { roles, has } = useRoles();
+
+  // Customers (portal-only users) see just the portal
+  const isPortalOnly = roles.length > 0 && has("customer") && !has("admin") && roles.every((r) => r === "customer");
+  const items = isPortalOnly ? navItems.filter((i) => i.path === "/portal") : navItems;
 
   const initials = profile?.full_name
     ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
