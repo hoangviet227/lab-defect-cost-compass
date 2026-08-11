@@ -1,3 +1,4 @@
+import { num } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
@@ -137,15 +138,15 @@ export default function ProductBom() {
                             <TableCell className="text-right">
                               {canManageProducts ? (
                                 <Input type="number" step="0.001" value={b.quantity} className="h-7 w-24 text-right ml-auto"
-                                  onChange={(e) => setBoms(boms.map((x) => x.id === b.id ? { ...x, quantity: +e.target.value } : x))}
-                                  onBlur={(e) => updateBom(b, { quantity: +e.target.value })} />
+                                  onChange={(e) => setBoms(boms.map((x) => x.id === b.id ? { ...x, quantity: num(e.target.value) } : x))}
+                                  onBlur={(e) => updateBom(b, { quantity: num(e.target.value) })} />
                               ) : b.quantity}
                             </TableCell>
                             <TableCell className="text-right">
                               {canManageProducts ? (
                                 <Input type="number" step="0.1" value={b.waste_pct} className="h-7 w-20 text-right ml-auto"
-                                  onChange={(e) => setBoms(boms.map((x) => x.id === b.id ? { ...x, waste_pct: +e.target.value } : x))}
-                                  onBlur={(e) => updateBom(b, { waste_pct: +e.target.value })} />
+                                  onChange={(e) => setBoms(boms.map((x) => x.id === b.id ? { ...x, waste_pct: num(e.target.value) } : x))}
+                                  onBlur={(e) => updateBom(b, { waste_pct: num(e.target.value) })} />
                               ) : `${b.waste_pct}%`}
                             </TableCell>
                             <TableCell className="text-right">{c.toLocaleString("vi-VN")}</TableCell>
@@ -169,8 +170,8 @@ export default function ProductBom() {
                           <SelectContent>{materials.map((m) => <SelectItem key={m.id} value={m.id}>{m.code} — {m.name}</SelectItem>)}</SelectContent>
                         </Select>
                       </div>
-                      <div className="w-28"><label className="text-xs text-muted-foreground">SL</label><Input type="number" step="0.001" value={newBom.quantity ?? 1} onChange={(e) => setNewBom({ ...newBom, quantity: +e.target.value })} /></div>
-                      <div className="w-24"><label className="text-xs text-muted-foreground">% hao</label><Input type="number" step="0.1" value={newBom.waste_pct ?? 0} onChange={(e) => setNewBom({ ...newBom, waste_pct: +e.target.value })} /></div>
+                      <div className="w-28"><label className="text-xs text-muted-foreground">SL</label><Input type="number" step="0.001" value={newBom.quantity ?? 1} onChange={(e) => setNewBom({ ...newBom, quantity: num(e.target.value) })} /></div>
+                      <div className="w-24"><label className="text-xs text-muted-foreground">% hao</label><Input type="number" step="0.1" value={newBom.waste_pct ?? 0} onChange={(e) => setNewBom({ ...newBom, waste_pct: num(e.target.value) })} /></div>
                       <Button onClick={addBom}><Plus className="h-4 w-4 mr-1" />Thêm</Button>
                     </div>
                   </Card>
@@ -200,13 +201,13 @@ export default function ProductBom() {
                             <TableCell className="text-right">
                               {canManagePrices ? (
                                 <Input type="number" value={p.price} className="h-8 w-32 text-right ml-auto"
-                                  onChange={(e) => { const c = [...prices]; c[idx] = { ...p, price: +e.target.value }; setPrices(c); }} />
+                                  onChange={(e) => { const c = [...prices]; c[idx] = { ...p, price: num(e.target.value) }; setPrices(c); }} />
                               ) : p.price.toLocaleString("vi-VN")}
                             </TableCell>
                             <TableCell className="text-right">
                               {canManagePrices ? (
                                 <Input type="number" step="0.1" value={p.discount_pct} className="h-8 w-24 text-right ml-auto"
-                                  onChange={(e) => { const c = [...prices]; c[idx] = { ...p, discount_pct: +e.target.value }; setPrices(c); }} />
+                                  onChange={(e) => { const c = [...prices]; c[idx] = { ...p, discount_pct: num(e.target.value) }; setPrices(c); }} />
                               ) : `${p.discount_pct}%`}
                             </TableCell>
                             <TableCell className="text-right font-semibold">{finalPrice.toLocaleString("vi-VN")}</TableCell>

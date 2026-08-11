@@ -1,3 +1,4 @@
+import { num } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -99,7 +100,7 @@ export default function Production() {
                     <TableCell>{products.find(p => p.id === it.product_id)?.name ?? it.product_id}</TableCell>
                     <TableCell>{it.planned_qty}</TableCell>
                     <TableCell>
-                      <Input type="number" defaultValue={it.produced_qty} onBlur={(e) => updateProduced(it.id, Number(e.target.value))} disabled={!canManage} />
+                      <Input type="number" defaultValue={it.produced_qty} onBlur={(e) => updateProduced(it.id, num(e.target.value))} disabled={!canManage} />
                     </TableCell>
                   </TableRow>
                 ))}

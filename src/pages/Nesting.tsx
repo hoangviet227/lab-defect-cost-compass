@@ -1,3 +1,4 @@
+import { num } from "@/lib/utils";
 import { useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -46,8 +47,8 @@ export default function Nesting() {
 
         <Card className="p-4 space-y-4">
           <div className="flex items-end gap-4 flex-wrap">
-            <div><Label>Khổ cuộn (cm)</Label><Input type="number" step="0.1" value={rollWidth} onChange={(e) => setRollWidth(+e.target.value)} className="w-32" /></div>
-            <div><Label>Khe cắt (cm)</Label><Input type="number" step="0.1" value={kerf} onChange={(e) => setKerf(+e.target.value)} className="w-32" /></div>
+            <div><Label>Khổ cuộn (cm)</Label><Input type="number" step="0.1" value={rollWidth} onChange={(e) => setRollWidth(num(e.target.value))} className="w-32" /></div>
+            <div><Label>Khe cắt (cm)</Label><Input type="number" step="0.1" value={kerf} onChange={(e) => setKerf(num(e.target.value))} className="w-32" /></div>
             <Button onClick={() => setRan(true)}><Play className="h-4 w-4 mr-1" />Tính</Button>
           </div>
 
@@ -71,9 +72,9 @@ export default function Nesting() {
                       <Input value={i.label} onChange={(e) => updateRow(i.id, { label: e.target.value })} className="h-8" />
                     </div>
                   </TableCell>
-                  <TableCell className="text-right"><Input type="number" step="0.1" value={i.width} onChange={(e) => updateRow(i.id, { width: +e.target.value })} className="h-8 w-24 text-right ml-auto" /></TableCell>
-                  <TableCell className="text-right"><Input type="number" step="0.1" value={i.height} onChange={(e) => updateRow(i.id, { height: +e.target.value })} className="h-8 w-24 text-right ml-auto" /></TableCell>
-                  <TableCell className="text-right"><Input type="number" value={i.qty} onChange={(e) => updateRow(i.id, { qty: +e.target.value })} className="h-8 w-20 text-right ml-auto" /></TableCell>
+                  <TableCell className="text-right"><Input type="number" step="0.1" value={i.width} onChange={(e) => updateRow(i.id, { width: num(e.target.value) })} className="h-8 w-24 text-right ml-auto" /></TableCell>
+                  <TableCell className="text-right"><Input type="number" step="0.1" value={i.height} onChange={(e) => updateRow(i.id, { height: num(e.target.value) })} className="h-8 w-24 text-right ml-auto" /></TableCell>
+                  <TableCell className="text-right"><Input type="number" value={i.qty} onChange={(e) => updateRow(i.id, { qty: num(e.target.value) })} className="h-8 w-20 text-right ml-auto" /></TableCell>
                   <TableCell className="text-center"><Checkbox checked={i.allowRotate !== false} onCheckedChange={(v) => updateRow(i.id, { allowRotate: !!v })} /></TableCell>
                   <TableCell><Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => delRow(i.id)}><Trash2 className="h-3 w-3" /></Button></TableCell>
                 </TableRow>
