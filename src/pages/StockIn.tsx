@@ -69,7 +69,7 @@ export default function StockIn() {
   const save = async () => {
     if (!header.warehouse_id) return toast.error("Chọn kho");
     if (lines.length === 0) return toast.error("Thêm ít nhất một dòng");
-    for (const l of lines) if (!l.material_id || l.quantity <= 0) return toast.error("Dòng không hợp lệ");
+    for (const l of lines) if (!l.material_id || !(l.quantity > 0)) return toast.error("Dòng không hợp lệ");
 
     let receiptId = current?.id;
     if (!receiptId) {

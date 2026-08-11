@@ -78,7 +78,8 @@ export default function Portal() {
   };
 
   const removeItem = async (id: string) => {
-    await supabase.from("order_items").delete().eq("id", id);
+    const { error } = await supabase.from("order_items").delete().eq("id", id);
+    if (error) return toast.error(error.message);
     openOrder(selectedOrder);
   };
 
@@ -98,7 +99,8 @@ export default function Portal() {
 
   const saveDrive = async (url: string, notes: string) => {
     if (!selectedOrder) return;
-    await supabase.from("orders").update({ design_file_url: url, design_notes: notes }).eq("id", selectedOrder.id);
+    const { error } = await supabase.from("orders").update({ design_file_url: url, design_notes: notes }).eq("id", selectedOrder.id);
+    if (error) return toast.error(error.message);
     toast.success("Đã lưu");
     load();
     openOrder({ ...selectedOrder, design_file_url: url, design_notes: notes });
@@ -108,7 +110,8 @@ export default function Portal() {
     if (!selectedOrder) return;
     if (items.length === 0) return toast.error("Cần ít nhất 1 dòng sản phẩm");
     const subtotal = items.reduce((s, i) => s + Number(i.quantity) * Number(i.unit_price), 0);
-    await supabase.from("orders").update({ subtotal, total_amount: subtotal, notes: (selectedOrder.notes || "") + "\n[Gửi từ Portal]" }).eq("id", selectedOrder.id);
+    const { error } = await supabase.from("orders").update({ subtotal, total_amount: subtotal, notes: (selectedOrder.notes || "") + "\n[Gửi từ Portal]" }).eq("id", selectedOrder.id);
+    if (error) return toast.error(error.message);
     toast.success("Đã gửi đơn — chờ xưởng xác nhận");
     setSelectedOrder(null); load();
   };
