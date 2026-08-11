@@ -1,3 +1,4 @@
+import { num } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -240,8 +241,8 @@ export default function HR() {
                     <DialogContent>
                       <DialogHeader><DialogTitle>Tạo kỳ lương</DialogTitle></DialogHeader>
                       <div className="grid grid-cols-2 gap-2">
-                        <div><Label>Tháng</Label><Input type="number" min={1} max={12} value={periodForm.period_month} onChange={e => setPeriodForm(f => ({ ...f, period_month: Number(e.target.value) }))} /></div>
-                        <div><Label>Năm</Label><Input type="number" value={periodForm.period_year} onChange={e => setPeriodForm(f => ({ ...f, period_year: Number(e.target.value) }))} /></div>
+                        <div><Label>Tháng</Label><Input type="number" min={1} max={12} value={periodForm.period_month} onChange={e => setPeriodForm(f => ({ ...f, period_month: num(e.target.value) }))} /></div>
+                        <div><Label>Năm</Label><Input type="number" value={periodForm.period_year} onChange={e => setPeriodForm(f => ({ ...f, period_year: num(e.target.value) }))} /></div>
                       </div>
                       <DialogFooter><Button onClick={savePeriod}>Tạo</Button></DialogFooter>
                     </DialogContent>

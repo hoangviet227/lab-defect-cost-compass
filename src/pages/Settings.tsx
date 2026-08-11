@@ -78,6 +78,7 @@ export default function Settings() {
   };
 
   const removeRole = async (userId: string, role: AppRole) => {
+    if (!confirm(`Gỡ quyền "${role}" của người dùng này?`)) return;
     const { error } = await supabase.from("user_roles").delete().eq("user_id", userId).eq("role", role);
     if (error) toast.error(error.message);
     else {

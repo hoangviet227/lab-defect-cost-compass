@@ -1,3 +1,4 @@
+import { num } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -133,9 +134,9 @@ export default function Products() {
                       </Select>
                     </div>
                     <div><Label>Đơn vị</Label><Input value={form.unit || ""} onChange={(e) => setForm({ ...form, unit: e.target.value })} /></div>
-                    <div><Label>Rộng (cm)</Label><Input type="number" step="0.1" value={form.width_cm ?? ""} onChange={(e) => setForm({ ...form, width_cm: e.target.value ? +e.target.value : null })} /></div>
-                    <div><Label>Cao (cm)</Label><Input type="number" step="0.1" value={form.height_cm ?? ""} onChange={(e) => setForm({ ...form, height_cm: e.target.value ? +e.target.value : null })} /></div>
-                    <div className="col-span-2"><Label>Giá cơ bản (VNĐ)</Label><Input type="number" value={form.base_price ?? 0} onChange={(e) => setForm({ ...form, base_price: +e.target.value })} /></div>
+                    <div><Label>Rộng (cm)</Label><Input type="number" step="0.1" value={form.width_cm ?? ""} onChange={(e) => setForm({ ...form, width_cm: e.target.value ? num(e.target.value) : null })} /></div>
+                    <div><Label>Cao (cm)</Label><Input type="number" step="0.1" value={form.height_cm ?? ""} onChange={(e) => setForm({ ...form, height_cm: e.target.value ? num(e.target.value) : null })} /></div>
+                    <div className="col-span-2"><Label>Giá cơ bản (VNĐ)</Label><Input type="number" value={form.base_price ?? 0} onChange={(e) => setForm({ ...form, base_price: num(e.target.value) })} /></div>
                     <div className="col-span-2"><Label>Ghi chú</Label><Textarea rows={2} value={form.notes || ""} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
                   </div>
                   <DialogFooter><Button onClick={save}>Lưu</Button></DialogFooter>

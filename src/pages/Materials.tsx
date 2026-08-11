@@ -1,3 +1,4 @@
+import { num } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -104,9 +105,9 @@ export default function Materials() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div><Label>Khổ (cm)</Label><Input type="number" step="0.1" value={form.width_cm ?? ""} onChange={(e) => setForm({ ...form, width_cm: e.target.value ? +e.target.value : null })} /></div>
-                  <div><Label>Độ dày (mm)</Label><Input type="number" step="0.01" value={form.thickness_mm ?? ""} onChange={(e) => setForm({ ...form, thickness_mm: e.target.value ? +e.target.value : null })} /></div>
-                  <div><Label>Tồn tối thiểu</Label><Input type="number" value={form.min_stock ?? 0} onChange={(e) => setForm({ ...form, min_stock: +e.target.value })} /></div>
+                  <div><Label>Khổ (cm)</Label><Input type="number" step="0.1" value={form.width_cm ?? ""} onChange={(e) => setForm({ ...form, width_cm: e.target.value ? num(e.target.value) : null })} /></div>
+                  <div><Label>Độ dày (mm)</Label><Input type="number" step="0.01" value={form.thickness_mm ?? ""} onChange={(e) => setForm({ ...form, thickness_mm: e.target.value ? num(e.target.value) : null })} /></div>
+                  <div><Label>Tồn tối thiểu</Label><Input type="number" value={form.min_stock ?? 0} onChange={(e) => setForm({ ...form, min_stock: num(e.target.value) })} /></div>
                 </div>
                 <DialogFooter><Button onClick={save}>Lưu</Button></DialogFooter>
               </DialogContent>

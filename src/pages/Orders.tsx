@@ -1,3 +1,4 @@
+import { num } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -193,7 +194,7 @@ export default function Orders() {
               </div>
               <div><Label>Ngày đặt</Label><Input type="date" value={header.order_date ?? ""} onChange={(e) => setHeader({ ...header, order_date: e.target.value })} /></div>
               <div><Label>Ngày giao</Label><Input type="date" value={header.delivery_date ?? ""} onChange={(e) => setHeader({ ...header, delivery_date: e.target.value })} /></div>
-              <div><Label>Chiết khấu</Label><Input type="number" value={header.discount ?? 0} onChange={(e) => setHeader({ ...header, discount: Number(e.target.value) })} /></div>
+              <div><Label>Chiết khấu</Label><Input type="number" value={header.discount ?? 0} onChange={(e) => setHeader({ ...header, discount: num(e.target.value) })} /></div>
               <div className="col-span-2"><Label>Ghi chú</Label><Input value={header.notes ?? ""} onChange={(e) => setHeader({ ...header, notes: e.target.value })} /></div>
             </div>
 
@@ -218,8 +219,8 @@ export default function Orders() {
                           <SelectContent>{products.map((p) => <SelectItem key={p.id} value={p.id}>{p.code} — {p.name}</SelectItem>)}</SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell><Input type="number" value={l.quantity} onChange={(e) => { const np = [...lines]; np[i].quantity = Number(e.target.value); setLines(np); }} /></TableCell>
-                      <TableCell><Input type="number" value={l.unit_price} onChange={(e) => { const np = [...lines]; np[i].unit_price = Number(e.target.value); setLines(np); }} /></TableCell>
+                      <TableCell><Input type="number" value={l.quantity} onChange={(e) => { const np = [...lines]; np[i].quantity = num(e.target.value); setLines(np); }} /></TableCell>
+                      <TableCell><Input type="number" value={l.unit_price} onChange={(e) => { const np = [...lines]; np[i].unit_price = num(e.target.value); setLines(np); }} /></TableCell>
                       <TableCell className="text-right">{(l.quantity * l.unit_price).toLocaleString("vi-VN")}</TableCell>
                       <TableCell><Button size="icon" variant="ghost" onClick={() => setLines(lines.filter((_, x) => x !== i))}><Trash2 className="h-3 w-3" /></Button></TableCell>
                     </TableRow>

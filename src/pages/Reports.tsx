@@ -9,6 +9,7 @@ export default function Reports() {
   const [stats, setStats] = useState({ ordersToday: 0, revenueMonth: 0, activeOrders: 0, lowStockCount: 0 });
   const [stock, setStock] = useState<any[]>([]);
   const [topProducts, setTopProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -42,14 +43,14 @@ export default function Reports() {
       })).sort((a, b) => b.total - a.total).slice(0, 10);
 
       setStats({ ordersToday: ot ?? 0, revenueMonth: revenue, activeOrders: ao ?? 0, lowStockCount: low });
-      setStock(stockRows); setTopProducts(top);
+      setStock(stockRows); setTopProducts(top); setLoading(false);
     })();
   }, []);
 
   return (
     <AppLayout>
       <div className="p-6 max-w-6xl mx-auto space-y-4">
-        <div><h1 className="text-2xl font-bold">Báo cáo</h1>
+        <div><h1 className="text-2xl font-bold">Báo cáo{loading && <span className="ml-2 text-sm font-normal text-muted-foreground">Đang tải...</span>}</h1>
           <p className="text-sm text-muted-foreground">Tổng hợp doanh thu, tồn kho và top sản phẩm.</p></div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

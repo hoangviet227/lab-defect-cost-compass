@@ -1,3 +1,4 @@
+import { num } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,7 +51,9 @@ export default function Production() {
     if (current?.id === po.id) setCurrent({ ...po, ...patch });
   };
 
-  const updateProduced = async (itemId: string, produced: number) => {
+  const updateProduced = async (itemId: string, produced: number, plannedQty?: number) => {
+    if (produced < 0) return toast.error("Số lượng không hợp lệ");
+    if (plannedQty != null && produced > plannedQty) return toast.error(`Không vượt quá kế hoạch (${plannedQty})`);
     const { error } = await supabase.from("production_order_items").update({ produced_qty: produced }).eq("id", itemId);
     if (error) return toast.error(error.message);
     if (current) openDetail(current);
@@ -99,7 +102,7 @@ export default function Production() {
                     <TableCell>{products.find(p => p.id === it.product_id)?.name ?? it.product_id}</TableCell>
                     <TableCell>{it.planned_qty}</TableCell>
                     <TableCell>
-                      <Input type="number" defaultValue={it.produced_qty} onBlur={(e) => updateProduced(it.id, Number(e.target.value))} disabled={!canManage} />
+                      <Input type="number" defaultValue={it.produced_qty} onBlur={(e) => updateProduced(it.id, num(e.target.value), Number(it.planned_qty))} disabled={!canManage} />
                     </TableCell>
                   </TableRow>
                 ))}

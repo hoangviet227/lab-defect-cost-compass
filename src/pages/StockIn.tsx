@@ -1,3 +1,4 @@
+import { num } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,7 +69,7 @@ export default function StockIn() {
   const save = async () => {
     if (!header.warehouse_id) return toast.error("Chọn kho");
     if (lines.length === 0) return toast.error("Thêm ít nhất một dòng");
-    for (const l of lines) if (!l.material_id || l.quantity <= 0) return toast.error("Dòng không hợp lệ");
+    for (const l of lines) if (!l.material_id || !(l.quantity > 0)) return toast.error("Dòng không hợp lệ");
 
     let receiptId = current?.id;
     if (!receiptId) {
@@ -197,8 +198,8 @@ export default function StockIn() {
                           <SelectContent>{materials.map((m) => <SelectItem key={m.id} value={m.id}>{m.code} — {m.name}</SelectItem>)}</SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell><Input type="number" step="0.001" value={l.quantity} onChange={(e) => updateLine(i, { quantity: +e.target.value })} /></TableCell>
-                      <TableCell><Input type="number" value={l.unit_cost} onChange={(e) => updateLine(i, { unit_cost: +e.target.value })} /></TableCell>
+                      <TableCell><Input type="number" step="0.001" value={l.quantity} onChange={(e) => updateLine(i, { quantity: num(e.target.value) })} /></TableCell>
+                      <TableCell><Input type="number" value={l.unit_cost} onChange={(e) => updateLine(i, { unit_cost: num(e.target.value) })} /></TableCell>
                       <TableCell className="text-right">{(l.quantity * l.unit_cost).toLocaleString("vi-VN")}</TableCell>
                       <TableCell><Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => removeLine(i)}><Trash2 className="h-3 w-3" /></Button></TableCell>
                     </TableRow>
