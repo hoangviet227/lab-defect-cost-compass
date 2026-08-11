@@ -36,11 +36,11 @@ export default function Suppliers() {
     if (!form.name) return toast.error("Nhập tên");
     try {
       if (current) {
-        const { error } = await supabase.from("suppliers").update(payload()).eq("id", current.id);
+        const { error } = await supabase.from("suppliers").update(payload() as any).eq("id", current.id);
         if (error) throw error;
       } else {
         const code = form.code || `NCC${Date.now().toString().slice(-6)}`;
-        const { error } = await supabase.from("suppliers").insert({ ...payload(), code });
+        const { error } = await supabase.from("suppliers").insert({ ...payload(), code, name: form.name } as any);
         if (error) throw error;
       }
       toast.success("Đã lưu"); setOpen(false); load();
