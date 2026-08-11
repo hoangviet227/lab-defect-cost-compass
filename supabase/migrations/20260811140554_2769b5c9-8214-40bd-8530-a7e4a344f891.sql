@@ -1,0 +1,21 @@
+REVOKE EXECUTE ON FUNCTION public.next_sequence(text, text, integer) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.current_user_roles() FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.confirm_order(uuid) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.confirm_purchase_receipt(uuid) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.confirm_stock_issue(uuid) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.confirm_finance_transaction(uuid) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.create_production_from_order(uuid) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.generate_payslips(uuid) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.close_payroll_period(uuid) FROM anon, public;
+
+GRANT EXECUTE ON FUNCTION public.next_sequence(text, text, integer) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.current_user_roles() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.confirm_order(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.confirm_purchase_receipt(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.confirm_stock_issue(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.confirm_finance_transaction(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.create_production_from_order(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.generate_payslips(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.close_payroll_period(uuid) TO authenticated;
