@@ -19,10 +19,16 @@ export default function Suppliers() {
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<any | null>(null);
   const [form, setForm] = useState<any>({});
+  const [loading, setLoading] = useState(true);
+
+  const FIELDS = ["name", "phone", "email", "address", "contact_person", "tax_code", "note", "is_active"] as const;
+  const payload = () => Object.fromEntries(FIELDS.filter((k) => form[k] !== undefined).map((k) => [k, form[k]]));
 
   const load = async () => {
-    const { data } = await supabase.from("suppliers").select("*").order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("suppliers").select("*").order("created_at", { ascending: false });
+    if (error) toast.error(error.message);
     setRows(data ?? []);
+    setLoading(false);
   };
   useEffect(() => { load(); }, []);
 
@@ -30,11 +36,11 @@ export default function Suppliers() {
     if (!form.name) return toast.error("Nhập tên");
     try {
       if (current) {
-        const { error } = await supabase.from("suppliers").update(form).eq("id", current.id);
+        const { error } = await supabase.from("suppliers").update(payload()).eq("id", current.id);
         if (error) throw error;
       } else {
         const code = form.code || `NCC${Date.now().toString().slice(-6)}`;
-        const { error } = await supabase.from("suppliers").insert({ ...form, code });
+        const { error } = await supabase.from("suppliers").insert({ ...payload(), code });
         if (error) throw error;
       }
       toast.success("Đã lưu"); setOpen(false); load();
@@ -64,7 +70,8 @@ export default function Suppliers() {
                   <TableCell><Badge variant={r.is_active ? "default" : "secondary"}>{r.is_active ? "Đang HĐ" : "Ngưng"}</Badge></TableCell>
                 </TableRow>
               ))}
-              {rows.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">Chưa có NCC</TableCell></TableRow>}
+              {loading && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">Đang tải...</TableCell></TableRow>}
+              {!loading && rows.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">Chưa có NCC</TableCell></TableRow>}
             </TableBody>
           </Table>
         </Card>
