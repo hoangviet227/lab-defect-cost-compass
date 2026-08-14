@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { StackedLogo } from "@/components/StackedLogo";
 import { useToast } from "@/hooks/use-toast";
+import { toLoginEmail } from "@/lib/account";
 
 export default function Auth() {
   const { user, loading, signIn, signUp } = useAuth();
@@ -34,7 +35,9 @@ export default function Auth() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await signIn(loginEmail, loginPassword);
+      const email = toLoginEmail(loginEmail);
+      if (!email) throw new Error("Nhập tên đăng nhập hoặc email");
+      await signIn(email, loginPassword);
       toast({ title: "Đăng nhập thành công" });
     } catch (error: any) {
       toast({ title: "Đăng nhập thất bại", description: error.message, variant: "destructive" });
@@ -51,7 +54,9 @@ export default function Auth() {
     }
     setIsSubmitting(true);
     try {
-      await signUp(signupEmail, signupPassword, signupName);
+      const email = toLoginEmail(signupEmail);
+      if (!email) throw new Error("Nhập tên đăng nhập hoặc email");
+      await signUp(email, signupPassword, signupName);
       toast({ title: "Đã tạo tài khoản", description: "Kiểm tra email để xác nhận." });
     } catch (error: any) {
       toast({ title: "Đăng ký thất bại", description: error.message, variant: "destructive" });
@@ -80,8 +85,8 @@ export default function Auth() {
           <TabsContent value="login" className="mt-4">
             <form onSubmit={handleLogin} className="space-y-3">
               <div className="space-y-1">
-                <Label className="text-[12px]">Email</Label>
-                <Input type="email" placeholder="ban@xuong.vn" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required className="h-8 text-[13px]" />
+                <Label className="text-[12px]">Tên đăng nhập hoặc email</Label>
+                <Input type="text" autoCapitalize="none" placeholder="vietnv hoặc ban@xuong.vn" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required className="h-8 text-[13px]" />
               </div>
               <div className="space-y-1">
                 <Label className="text-[12px]">Mật khẩu</Label>
@@ -101,8 +106,9 @@ export default function Auth() {
                 <Input type="text" placeholder="Nguyễn Văn A" value={signupName} onChange={(e) => setSignupName(e.target.value)} required className="h-8 text-[13px]" />
               </div>
               <div className="space-y-1">
-                <Label className="text-[12px]">Email</Label>
-                <Input type="email" placeholder="ban@xuong.vn" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required className="h-8 text-[13px]" />
+                <Label className="text-[12px]">Tên đăng nhập hoặc email</Label>
+                <Input type="text" autoCapitalize="none" placeholder="vietnv hoặc ban@xuong.vn" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required className="h-8 text-[13px]" />
+                <p className="text-[11px] text-muted-foreground">Dùng username sẽ tự gán email nội bộ dạng <b>username@xuongin.local</b>.</p>
               </div>
               <div className="space-y-1">
                 <Label className="text-[12px]">Mật khẩu</Label>
