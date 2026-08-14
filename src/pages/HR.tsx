@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { useRoles } from "@/hooks/use-roles";
 import { Plus, Lock } from "lucide-react";
+import { EmployeeManager } from "@/components/EmployeeManager";
 
 type Emp = { id: string; user_id: string | null; employee_code: string | null; base_salary: number | null; allowance: number | null; is_active: boolean | null; full_name?: string | null };
 type Att = { id: string; employee_id: string; work_date: string; check_in: string | null; check_out: string | null; hours: number; shift: string | null; notes: string | null };
@@ -25,7 +26,8 @@ const fmt = (n: number) => new Intl.NumberFormat("vi-VN").format(Math.round(n ||
 export default function HR() {
   const { has, loading: rolesLoading } = useRoles();
   const canManage = has("admin") || has("accountant");
-  const [tab, setTab] = useState("attendance");
+  const isAdmin = has("admin");
+  const [tab, setTab] = useState("employees");
   const [emps, setEmps] = useState<Emp[]>([]);
   const [att, setAtt] = useState<Att[]>([]);
   const [outs, setOuts] = useState<Out[]>([]);
@@ -127,10 +129,15 @@ export default function HR() {
 
         <Tabs value={tab} onValueChange={setTab}>
           <TabsList>
+            <TabsTrigger value="employees">Nhân viên</TabsTrigger>
             <TabsTrigger value="attendance">Chấm công</TabsTrigger>
             <TabsTrigger value="outputs">Sản lượng</TabsTrigger>
             <TabsTrigger value="payroll">Bảng lương</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="employees" className="space-y-3">
+            <EmployeeManager isAdmin={isAdmin} onChanged={loadAll} />
+          </TabsContent>
 
           <TabsContent value="attendance" className="space-y-3">
             {canManage && (
