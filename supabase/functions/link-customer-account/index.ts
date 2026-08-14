@@ -60,6 +60,9 @@ Deno.serve(async (req) => {
     }
 
     if (!email) return json({ error: "Nhập email tài khoản" }, 400);
+    if (!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) {
+      return json({ error: `Email không hợp lệ: "${email}". Nhập dạng ten@tenmien.com` }, 400);
+    }
 
     // Find existing auth user by email
     let userId: string | null = null;
