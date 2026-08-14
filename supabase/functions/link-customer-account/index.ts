@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
+import { toLoginEmail, isEmail } from "../_shared/account.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,7 +40,7 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const customerId: string = body.customer_id;
-    const email: string = (body.email ?? "").trim().toLowerCase();
+    const email: string = toLoginEmail(body.email ?? body.login ?? "");
     const password: string | undefined = body.password || undefined;
     const unlink: boolean = !!body.unlink;
 
@@ -59,9 +60,9 @@ Deno.serve(async (req) => {
       return json({ ok: true, unlinked: true });
     }
 
-    if (!email) return json({ error: "Nhập email tài khoản" }, 400);
-    if (!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) {
-      return json({ error: `Email không hợp lệ: "${email}". Nhập dạng ten@tenmien.com` }, 400);
+    if (!email) return json({ error: "Nhập username hoặc email tài khoản" }, 400);
+    if (!isEmail(email)) {
+      return json({ error: `Tên đăng nhập không hợp lệ: "${body.email ?? ""}"` }, 400);
     }
 
     // Find existing auth user by email

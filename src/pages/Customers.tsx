@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Plus, KeyRound } from "lucide-react";
 import { useRoles } from "@/hooks/use-roles";
+import { toLoginEmail, isEmail, displayLogin } from "@/lib/account";
 
 const FIELDS = [
   "code", "name", "phone", "email", "address", "contact_person",
@@ -48,7 +49,7 @@ export default function Customers() {
   };
   const openEdit = (r: any) => {
     setCurrent(r); setForm(r);
-    setAcc({ email: r.email ?? "", password: "" });
+    setAcc({ email: displayLogin(r.email) === "-" ? "" : displayLogin(r.email), password: "" });
     setOpen(true);
   };
 
@@ -82,9 +83,9 @@ export default function Customers() {
 
   const linkAccount = async (unlink = false) => {
     if (!current?.id) return toast.error("Lưu khách hàng trước khi cấp tài khoản");
-    const email = acc.email.trim().toLowerCase();
-    if (!unlink && !/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) {
-      return toast.error("Email đăng nhập không hợp lệ (vd: khach@email.com)");
+    const email = toLoginEmail(acc.email);
+    if (!unlink && !isEmail(email)) {
+      return toast.error("Tên đăng nhập không hợp lệ (vd: khach01 hoặc khach@email.com)");
     }
     setLinking(true);
     const { data, error } = await supabase.functions.invoke("link-customer-account", {
@@ -168,13 +169,13 @@ export default function Customers() {
               ) : (
                 <>
                   <div className="grid grid-cols-2 gap-3">
-                    <div><Label className="text-xs">Email đăng nhập</Label>
-                      <Input value={acc.email} onChange={(e) => setAcc({ ...acc, email: e.target.value })} placeholder="khach@email.com" /></div>
+                    <div><Label className="text-xs">Username hoặc email</Label>
+                      <Input value={acc.email} onChange={(e) => setAcc({ ...acc, email: e.target.value })} placeholder="khach01 hoặc khach@email.com" /></div>
                     <div><Label className="text-xs">Mật khẩu</Label>
                       <Input type="password" value={acc.password} onChange={(e) => setAcc({ ...acc, password: e.target.value })} placeholder="Tối thiểu 6 ký tự" /></div>
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    Nếu email chưa có tài khoản, hệ thống sẽ tạo mới (cần mật khẩu) và cấp quyền <b>customer</b> để đăng nhập vào /portal.
+                    Nhập username sẽ tự gán email nội bộ <b>username@xuongin.local</b>. Nếu tài khoản chưa tồn tại, hệ thống sẽ tạo mới (cần mật khẩu) và cấp quyền <b>customer</b> để đăng nhập vào /portal.
                   </p>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" disabled={linking} onClick={() => linkAccount(false)}>
