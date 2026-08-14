@@ -82,11 +82,15 @@ export default function Customers() {
 
   const linkAccount = async (unlink = false) => {
     if (!current?.id) return toast.error("Lưu khách hàng trước khi cấp tài khoản");
+    const email = acc.email.trim().toLowerCase();
+    if (!unlink && !/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) {
+      return toast.error("Email đăng nhập không hợp lệ (vd: khach@email.com)");
+    }
     setLinking(true);
     const { data, error } = await supabase.functions.invoke("link-customer-account", {
       body: unlink
         ? { customer_id: current.id, unlink: true }
-        : { customer_id: current.id, email: acc.email, password: acc.password || undefined },
+        : { customer_id: current.id, email, password: acc.password || undefined },
     });
     setLinking(false);
     const err = error?.message || (data as any)?.error;
