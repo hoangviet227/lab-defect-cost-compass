@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import { Plus, Trash2, Check } from "lucide-react";
 import { useRoles } from "@/hooks/use-roles";
+import { logActivity } from "@/lib/activity";
 
 type Receipt = {
   id: string; code: string; supplier_id: string | null; warehouse_id: string;
@@ -99,6 +100,7 @@ export default function StockIn() {
     if (!confirm_(`Xác nhận phiếu ${r.code}? Tồn kho và giá vốn sẽ được cập nhật.`)) return;
     const { error } = await supabase.rpc("confirm_purchase_receipt", { _receipt_id: r.id });
     if (error) return toast.error(error.message);
+    await logActivity({ action: "confirm", entity_table: "purchase_receipts", entity_id: r.id });
     toast.success("Đã xác nhận phiếu nhập"); load();
   };
   const confirm_ = (m: string) => window.confirm(m);

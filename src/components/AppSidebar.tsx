@@ -15,6 +15,7 @@ import {
   Settings,
   LogOut,
   BookText,
+  HelpCircle,
   Scissors,
 } from "lucide-react";
 import { StackedLogo } from "./StackedLogo";
@@ -44,6 +45,7 @@ export const navItems = [
   { icon: BarChart3, label: "Báo cáo", path: "/reports" },
   { icon: BookText, label: "Nhật ký", path: "/activity" },
   { icon: Users, label: "Cổng khách hàng", path: "/portal" },
+  { icon: HelpCircle, label: "Hướng dẫn", path: "/guide" },
   { icon: Settings, label: "Cài đặt", path: "/settings" },
 ];
 

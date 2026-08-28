@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import { Plus, Trash2, Check } from "lucide-react";
 import { useRoles } from "@/hooks/use-roles";
+import { logActivity } from "@/lib/activity";
 
 type Issue = { id: string; code: string; warehouse_id: string; production_order_id: string | null; status: "draft" | "confirmed" | "cancelled"; total_amount: number; notes: string | null };
 type Line = { id?: string; material_id: string; quantity: number };
@@ -76,6 +77,7 @@ export default function StockOut() {
   const confirmIssue = async (id: string) => {
     const { error } = await supabase.rpc("confirm_stock_issue", { _issue_id: id });
     if (error) return toast.error(error.message);
+    await logActivity({ action: "confirm", entity_table: "stock_issues", entity_id: id });
     toast.success("Đã xác nhận xuất kho"); load();
   };
 
