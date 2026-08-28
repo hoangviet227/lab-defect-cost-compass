@@ -26,6 +26,7 @@ import HR from "./pages/HR";
 import Portal from "./pages/Portal";
 import SettingsPage from "./pages/Settings";
 import Activity from "./pages/Activity";
+import Guide from "./pages/Guide";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,6 +64,7 @@ const App = () => (
               <Route path="/employees" element={<Protected><HR /></Protected>} />
               <Route path="/reports" element={<Protected><Reports /></Protected>} />
               <Route path="/activity" element={<Protected><Activity /></Protected>} />
+              <Route path="/guide" element={<Protected><Guide /></Protected>} />
               <Route path="/settings" element={<Protected><SettingsPage /></Protected>} />
               <Route path="*" element={<NotFound />} />
             </Routes>

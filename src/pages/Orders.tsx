@@ -11,7 +11,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Plus, Trash2, Check, Factory } from "lucide-react";
+import { Plus, Trash2, Check, Factory, Truck, Printer } from "lucide-react";
+import { logActivity } from "@/lib/activity";
+import { printHtml, docTemplate } from "@/lib/print";
 import { useRoles } from "@/hooks/use-roles";
 
 type Order = {
@@ -127,13 +129,55 @@ export default function Orders() {
   const confirmOrder = async (id: string) => {
     const { error } = await supabase.rpc("confirm_order", { _order_id: id });
     if (error) return toast.error(error.message);
+    await logActivity({ action: "confirm", entity_table: "orders", entity_id: id });
     toast.success("Đã xác nhận đơn"); load();
   };
 
   const toProduction = async (id: string) => {
     const { error } = await supabase.rpc("create_production_from_order", { _order_id: id });
     if (error) return toast.error(error.message);
+    await logActivity({ action: "create_production", entity_table: "orders", entity_id: id });
     toast.success("Đã tạo lệnh sản xuất"); load();
+  };
+
+  const markDelivered = async (o: Order) => {
+    if (!window.confirm(`Đánh dấu đơn ${o.code} đã giao?`)) return;
+    const { error } = await supabase.from("orders").update({ status: "delivered" }).eq("id", o.id);
+    if (error) return toast.error(error.message);
+    await logActivity({ action: "deliver", entity_table: "orders", entity_id: o.id, before_data: { status: o.status }, after_data: { status: "delivered" } });
+    toast.success("Đã chuyển sang Đã giao"); load();
+  };
+
+  const printOrder = async (o: Order) => {
+    const [{ data: items }, { data: st }] = await Promise.all([
+      supabase.from("order_items").select("*").eq("order_id", o.id).order("created_at"),
+      supabase.from("app_settings").select("*").maybeSingle(),
+    ]);
+    const c = customers.find((x) => x.id === o.customer_id);
+    printHtml(`Đơn ${o.code}`, docTemplate({
+      workshop: {
+        name: st?.workshop_name ?? "Xưởng In",
+        address: st?.workshop_address,
+        phone: st?.workshop_phone,
+        tax_code: st?.workshop_tax_code,
+      },
+      docTitle: "PHIẾU ĐƠN HÀNG",
+      code: o.code,
+      date: o.order_date,
+      party: { name: c?.name, phone: c?.phone, address: c?.address },
+      lines: (items ?? []).map((it: any) => {
+        const p = products.find((x) => x.id === it.product_id);
+        return {
+          name: p ? `${p.code} — ${p.name}` : "Sản phẩm",
+          spec: [it.width_cm ? `R ${it.width_cm}cm` : "", it.height_cm ? `C ${it.height_cm}cm` : ""].filter(Boolean).join(" × "),
+          qty: Number(it.quantity),
+          price: Number(it.unit_price),
+          total: Number(it.line_total),
+        };
+      }),
+      discount: Number(o.discount ?? 0),
+      notes: o.notes,
+    }));
   };
 
   const total = lines.reduce((s, l) => s + l.quantity * l.unit_price, 0);
@@ -170,6 +214,10 @@ export default function Orders() {
                       {canManage && o.status === "confirmed" && (
                         <Button size="sm" variant="outline" onClick={() => toProduction(o.id)}><Factory className="h-3 w-3 mr-1" />Sản xuất</Button>
                       )}
+                      {canManage && (o.status === "confirmed" || o.status === "in_production") && (
+                        <Button size="sm" variant="outline" onClick={() => markDelivered(o)}><Truck className="h-3 w-3 mr-1" />Đã giao</Button>
+                      )}
+                      <Button size="sm" variant="ghost" onClick={() => printOrder(o)}><Printer className="h-3 w-3 mr-1" />In</Button>
                     </TableCell>
                   </TableRow>
                 );

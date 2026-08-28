@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { logActivity } from "@/lib/activity";
 import { Plus, CheckCircle2 } from "lucide-react";
 
 const fmt = (n: number) => Number(n || 0).toLocaleString("vi-VN");
@@ -90,6 +91,7 @@ export default function Finance() {
   const confirmTxn = async (id: string) => {
     const { error } = await supabase.rpc("confirm_finance_transaction", { _txn_id: id });
     if (error) return toast.error(error.message);
+    await logActivity({ action: "confirm", entity_table: "finance_transactions", entity_id: id });
     toast.success("Đã xác nhận"); loadAll();
   };
 
