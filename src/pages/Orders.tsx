@@ -19,19 +19,38 @@ import { useRoles } from "@/hooks/use-roles";
 type Order = {
   id: string; code: string; customer_id: string; tier_id: string | null;
   order_date: string; delivery_date: string | null;
-  status: "draft" | "confirmed" | "in_production" | "delivered" | "cancelled";
+  status: "draft" | "design" | "approved" | "printing" | "packing" | "confirmed" | "in_production" | "delivered" | "cancelled";
   subtotal: number; discount: number; total_amount: number; notes: string | null;
+  channel: string;
 };
-type Line = { id?: string; product_id: string; quantity: number; unit_price: number; width_cm?: number; height_cm?: number };
+type Line = { id?: string; product_id: string; quantity: number; unit_price: number; width_cm?: number; height_cm?: number; print_size_id?: string | null };
 
+// Quy trình 7 bước: Mới → Thiết kế → Duyệt → In → Đóng gói → Giao → Xong
+const WORKFLOW: { status: string; label: string; next?: string; nextLabel?: string }[] = [
+  { status: "draft", label: "Mới", next: "design", nextLabel: "Chuyển thiết kế" },
+  { status: "design", label: "Thiết kế", next: "approved", nextLabel: "Duyệt file" },
+  { status: "approved", label: "Đã duyệt", next: "printing", nextLabel: "Bắt đầu in" },
+  { status: "printing", label: "Đang in", next: "packing", nextLabel: "Đóng gói" },
+  { status: "packing", label: "Đóng gói", next: "delivered", nextLabel: "Giao hàng" },
+  { status: "delivered", label: "Đã giao" },
+];
 const statusColor: Record<string, string> = {
-  draft: "secondary", confirmed: "default", in_production: "default",
+  draft: "secondary", design: "outline", approved: "default", printing: "default",
+  packing: "default", confirmed: "default", in_production: "default",
   delivered: "default", cancelled: "destructive",
 };
 const statusLabel: Record<string, string> = {
-  draft: "Nháp", confirmed: "Đã xác nhận", in_production: "Đang SX",
+  draft: "Mới", design: "Thiết kế", approved: "Đã duyệt", printing: "Đang in",
+  packing: "Đóng gói", confirmed: "Đã xác nhận", in_production: "Đang SX",
   delivered: "Đã giao", cancelled: "Đã hủy",
 };
+const CHANNELS = [
+  { value: "direct", label: "Trực tiếp / Web" },
+  { value: "facebook", label: "Facebook" },
+  { value: "tiktok", label: "TikTok" },
+  { value: "shopee", label: "Shopee" },
+  { value: "lazada", label: "Lazada" },
+];
 
 export default function Orders() {
   const { has } = useRoles();
