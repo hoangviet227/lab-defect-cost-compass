@@ -286,6 +286,12 @@ export default function Orders() {
               <div><Label>Cấp giá</Label>
                 <div className="h-10 px-3 flex items-center text-sm border rounded-md">{tiers.find(t => t.id === header.tier_id)?.name ?? "Mặc định"}</div>
               </div>
+              <div><Label>Kênh bán</Label>
+                <Select value={header.channel ?? "direct"} onValueChange={(v) => { setHeader({ ...header, channel: v }); setLines((ls) => ls.map((l) => ({ ...l, unit_price: priceFor(l.product_id, header.tier_id, l.print_size_id, v) }))); }} disabled={current?.status !== "draft" && !!current}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{CHANNELS.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
               <div><Label>Ngày đặt</Label><Input type="date" value={header.order_date ?? ""} onChange={(e) => setHeader({ ...header, order_date: e.target.value })} /></div>
               <div><Label>Ngày giao</Label><Input type="date" value={header.delivery_date ?? ""} onChange={(e) => setHeader({ ...header, delivery_date: e.target.value })} /></div>
               <div><Label>Chiết khấu</Label><Input type="number" value={header.discount ?? 0} onChange={(e) => setHeader({ ...header, discount: num(e.target.value) })} /></div>
