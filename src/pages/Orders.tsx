@@ -254,9 +254,9 @@ export default function Orders() {
                     <TableCell className="text-right">{Number(o.total_amount).toLocaleString("vi-VN")}</TableCell>
                     <TableCell><Badge variant={statusColor[o.status] as any}>{statusLabel[o.status]}</Badge></TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()} className="text-right space-x-1">
-                      {canManage && o.status === "draft" && (
-                        <Button size="sm" variant="outline" onClick={() => confirmOrder(o.id)}><Check className="h-3 w-3 mr-1" />Xác nhận</Button>
-                      )}
+                      {(() => { const step = WORKFLOW.find((w) => w.status === o.status); return canManage && step?.next && (
+                        <Button size="sm" variant="outline" onClick={() => advanceStep(o)}><Check className="h-3 w-3 mr-1" />{step.nextLabel}</Button>
+                      ); })()}
                       {canManage && o.status === "confirmed" && (
                         <Button size="sm" variant="outline" onClick={() => toProduction(o.id)}><Factory className="h-3 w-3 mr-1" />Sản xuất</Button>
                       )}
