@@ -34,7 +34,7 @@ export const navItems = [
   { icon: Truck, label: "Giao hàng", path: "/deliveries" },
   { icon: Users, label: "Khách hàng", path: "/customers" },
   { icon: Package, label: "Sản phẩm", path: "/products" },
-  { icon: Scissors, label: "Nesting 60cm", path: "/nesting" },
+  { icon: Scissors, label: "Bảng giá theo khổ", path: "/pricing" },
   { icon: Boxes, label: "Vật tư", path: "/materials" },
   { icon: Boxes, label: "Kho", path: "/warehouses" },
   { icon: ArrowDownToLine, label: "Nhập kho", path: "/stock-in" },

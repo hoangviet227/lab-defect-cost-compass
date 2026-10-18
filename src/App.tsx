@@ -15,7 +15,7 @@ import StockIn from "./pages/StockIn";
 import StockOut from "./pages/StockOut";
 import Products from "./pages/Products";
 import ProductBom from "./pages/ProductBom";
-import Nesting from "./pages/Nesting";
+import ProductPricing from "./pages/ProductPricing";
 import Orders from "./pages/Orders";
 import Production from "./pages/Production";
 import Customers from "./pages/Customers";
