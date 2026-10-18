@@ -184,6 +184,16 @@ export default function Orders() {
     toast.success("Đã chuyển sang Đã giao"); load();
   };
 
+  const advanceStep = async (o: Order) => {
+    const step = WORKFLOW.find((w) => w.status === o.status);
+    if (!step?.next) return;
+    if (!window.confirm(`${step.nextLabel} cho đơn ${o.code}?`)) return;
+    const { error } = await supabase.from("orders").update({ status: step.next as any }).eq("id", o.id);
+    if (error) return toast.error(error.message);
+    await logActivity({ action: "advance_step", entity_table: "orders", entity_id: o.id, before_data: { status: o.status }, after_data: { status: step.next } });
+    toast.success(`Đã chuyển: ${step.nextLabel}`); load();
+  };
+
   const printOrder = async (o: Order) => {
     const [{ data: items }, { data: st }] = await Promise.all([
       supabase.from("order_items").select("*").eq("order_id", o.id).order("created_at"),
