@@ -60,27 +60,32 @@ export default function Orders() {
   const [tiers, setTiers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [prices, setPrices] = useState<any[]>([]);
+  const [sizes, setSizes] = useState<any[]>([]);
+  const [sizePrices, setSizePrices] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<Order | null>(null);
   const [lines, setLines] = useState<Line[]>([]);
-  const [header, setHeader] = useState<Partial<Order>>({ order_date: new Date().toISOString().slice(0, 10) });
+  const [header, setHeader] = useState<Partial<Order>>({ order_date: new Date().toISOString().slice(0, 10), channel: "direct" });
 
   const load = async () => {
-    const [{ data: os }, { data: cs }, { data: ts }, { data: ps }, { data: pp }] = await Promise.all([
+    const [{ data: os }, { data: cs }, { data: ts }, { data: ps }, { data: pp }, { data: sz }, { data: sp }] = await Promise.all([
       supabase.from("orders").select("*").order("created_at", { ascending: false }),
       supabase.from("customers").select("id,code,name,tier_id").eq("is_active", true),
-      supabase.from("customer_tiers").select("*").order("level"),
+      supabase.from("customer_tiers").select("*").order("sort_order"),
       supabase.from("products").select("id,code,name,base_price").eq("is_active", true).order("code"),
       supabase.from("product_prices").select("product_id,tier_id,price"),
+      supabase.from("print_sizes").select("*").eq("is_active", true).order("sort_order"),
+      supabase.from("product_size_prices").select("product_id,size_id,tier_id,channel,sale_price"),
     ]);
     setOrders((os ?? []) as Order[]);
     setCustomers(cs ?? []); setTiers(ts ?? []); setProducts(ps ?? []); setPrices(pp ?? []);
+    setSizes(sz ?? []); setSizePrices(sp ?? []);
   };
   useEffect(() => { load(); }, []);
 
   const openNew = () => {
     setCurrent(null); setLines([]);
-    setHeader({ order_date: new Date().toISOString().slice(0, 10), discount: 0 });
+    setHeader({ order_date: new Date().toISOString().slice(0, 10), discount: 0, channel: "direct" });
     setOpen(true);
   };
 
