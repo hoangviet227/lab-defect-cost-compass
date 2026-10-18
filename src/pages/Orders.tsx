@@ -136,6 +136,7 @@ export default function Orders() {
           code: codeData!, customer_id: header.customer_id!, tier_id: header.tier_id ?? null,
           order_date: header.order_date!, delivery_date: header.delivery_date ?? null,
           discount: header.discount ?? 0, notes: header.notes ?? null, status: "draft",
+          channel: header.channel ?? "direct",
         }).select().single();
         if (error) throw error;
         orderId = data.id;
@@ -143,6 +144,7 @@ export default function Orders() {
         const { error } = await supabase.from("orders").update({
           customer_id: header.customer_id!, tier_id: header.tier_id ?? null,
           delivery_date: header.delivery_date ?? null, discount: header.discount ?? 0, notes: header.notes ?? null,
+          channel: header.channel ?? "direct",
         }).eq("id", orderId);
         if (error) throw error;
         await supabase.from("order_items").delete().eq("order_id", orderId);
@@ -151,6 +153,7 @@ export default function Orders() {
         order_id: orderId!, product_id: l.product_id, quantity: l.quantity,
         unit_price: l.unit_price, line_total: l.quantity * l.unit_price,
         width_cm: l.width_cm ?? null, height_cm: l.height_cm ?? null,
+        print_size_id: l.print_size_id ?? null,
       }));
       const { error: e2 } = await supabase.from("order_items").insert(rows);
       if (e2) throw e2;
