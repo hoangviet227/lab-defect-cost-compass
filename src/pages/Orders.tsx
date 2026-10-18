@@ -305,7 +305,7 @@ export default function Orders() {
               </div>
               <Table>
                 <TableHeader><TableRow>
-                  <TableHead>Sản phẩm</TableHead><TableHead className="w-20">SL</TableHead>
+                  <TableHead>Sản phẩm</TableHead><TableHead className="w-36">Khổ in</TableHead><TableHead className="w-20">SL</TableHead>
                   <TableHead className="w-28">Đơn giá</TableHead><TableHead className="text-right w-32">Thành tiền</TableHead><TableHead className="w-10"></TableHead>
                 </TableRow></TableHeader>
                 <TableBody>
@@ -313,10 +313,24 @@ export default function Orders() {
                     <TableRow key={i}>
                       <TableCell>
                         <Select value={l.product_id} onValueChange={(v) => {
-                          const np = [...lines]; np[i].product_id = v; np[i].unit_price = priceFor(v, header.tier_id); setLines(np);
+                          const np = [...lines]; np[i].product_id = v; np[i].unit_price = priceFor(v, header.tier_id, np[i].print_size_id); setLines(np);
                         }}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>{products.map((p) => <SelectItem key={p.id} value={p.id}>{p.code} — {p.name}</SelectItem>)}</SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Select value={l.print_size_id ?? "none"} onValueChange={(v) => {
+                          const sid = v === "none" ? null : v;
+                          const np = [...lines]; np[i].print_size_id = sid;
+                          np[i].unit_price = priceFor(np[i].product_id, header.tier_id, sid);
+                          setLines(np);
+                        }}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">— Tự do —</SelectItem>
+                            {sizes.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                          </SelectContent>
                         </Select>
                       </TableCell>
                       <TableCell><Input type="number" value={l.quantity} onChange={(e) => { const np = [...lines]; np[i].quantity = num(e.target.value); setLines(np); }} /></TableCell>
