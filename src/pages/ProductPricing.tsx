@@ -113,6 +113,18 @@ export default function ProductPricing() {
 
   const margin = (sale: number, cost: number) => sale - cost;
 
+  if (!canManagePrices) {
+    return (
+      <AppLayout>
+        <div className="p-6 max-w-3xl mx-auto">
+          <Card className="p-6 text-sm text-muted-foreground">
+            Trang bảng giá chỉ dành cho quản trị, kế toán và sale. Tài khoản của bạn không có quyền xem giá vốn và giá bán.
+          </Card>
+        </div>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout>
       <div className="p-6 max-w-7xl mx-auto space-y-4">
