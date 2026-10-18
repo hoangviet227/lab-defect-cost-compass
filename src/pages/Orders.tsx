@@ -19,19 +19,38 @@ import { useRoles } from "@/hooks/use-roles";
 type Order = {
   id: string; code: string; customer_id: string; tier_id: string | null;
   order_date: string; delivery_date: string | null;
-  status: "draft" | "confirmed" | "in_production" | "delivered" | "cancelled";
+  status: "draft" | "design" | "approved" | "printing" | "packing" | "confirmed" | "in_production" | "delivered" | "cancelled";
   subtotal: number; discount: number; total_amount: number; notes: string | null;
+  channel: string;
 };
-type Line = { id?: string; product_id: string; quantity: number; unit_price: number; width_cm?: number; height_cm?: number };
+type Line = { id?: string; product_id: string; quantity: number; unit_price: number; width_cm?: number; height_cm?: number; print_size_id?: string | null };
 
+// Quy trình 7 bước: Mới → Thiết kế → Duyệt → In → Đóng gói → Giao → Xong
+const WORKFLOW: { status: string; label: string; next?: string; nextLabel?: string }[] = [
+  { status: "draft", label: "Mới", next: "design", nextLabel: "Chuyển thiết kế" },
+  { status: "design", label: "Thiết kế", next: "approved", nextLabel: "Duyệt file" },
+  { status: "approved", label: "Đã duyệt", next: "printing", nextLabel: "Bắt đầu in" },
+  { status: "printing", label: "Đang in", next: "packing", nextLabel: "Đóng gói" },
+  { status: "packing", label: "Đóng gói", next: "delivered", nextLabel: "Giao hàng" },
+  { status: "delivered", label: "Đã giao" },
+];
 const statusColor: Record<string, string> = {
-  draft: "secondary", confirmed: "default", in_production: "default",
+  draft: "secondary", design: "outline", approved: "default", printing: "default",
+  packing: "default", confirmed: "default", in_production: "default",
   delivered: "default", cancelled: "destructive",
 };
 const statusLabel: Record<string, string> = {
-  draft: "Nháp", confirmed: "Đã xác nhận", in_production: "Đang SX",
+  draft: "Mới", design: "Thiết kế", approved: "Đã duyệt", printing: "Đang in",
+  packing: "Đóng gói", confirmed: "Đã xác nhận", in_production: "Đang SX",
   delivered: "Đã giao", cancelled: "Đã hủy",
 };
+const CHANNELS = [
+  { value: "direct", label: "Trực tiếp / Web" },
+  { value: "facebook", label: "Facebook" },
+  { value: "tiktok", label: "TikTok" },
+  { value: "shopee", label: "Shopee" },
+  { value: "lazada", label: "Lazada" },
+];
 
 export default function Orders() {
   const { has } = useRoles();
@@ -41,27 +60,32 @@ export default function Orders() {
   const [tiers, setTiers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [prices, setPrices] = useState<any[]>([]);
+  const [sizes, setSizes] = useState<any[]>([]);
+  const [sizePrices, setSizePrices] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<Order | null>(null);
   const [lines, setLines] = useState<Line[]>([]);
-  const [header, setHeader] = useState<Partial<Order>>({ order_date: new Date().toISOString().slice(0, 10) });
+  const [header, setHeader] = useState<Partial<Order>>({ order_date: new Date().toISOString().slice(0, 10), channel: "direct" });
 
   const load = async () => {
-    const [{ data: os }, { data: cs }, { data: ts }, { data: ps }, { data: pp }] = await Promise.all([
+    const [{ data: os }, { data: cs }, { data: ts }, { data: ps }, { data: pp }, { data: sz }, { data: sp }] = await Promise.all([
       supabase.from("orders").select("*").order("created_at", { ascending: false }),
       supabase.from("customers").select("id,code,name,tier_id").eq("is_active", true),
-      supabase.from("customer_tiers").select("*").order("level"),
+      supabase.from("customer_tiers").select("*").order("sort_order"),
       supabase.from("products").select("id,code,name,base_price").eq("is_active", true).order("code"),
       supabase.from("product_prices").select("product_id,tier_id,price"),
+      supabase.from("print_sizes").select("*").eq("is_active", true).order("sort_order"),
+      supabase.from("product_size_prices").select("product_id,size_id,tier_id,channel,sale_price"),
     ]);
     setOrders((os ?? []) as Order[]);
     setCustomers(cs ?? []); setTiers(ts ?? []); setProducts(ps ?? []); setPrices(pp ?? []);
+    setSizes(sz ?? []); setSizePrices(sp ?? []);
   };
   useEffect(() => { load(); }, []);
 
   const openNew = () => {
     setCurrent(null); setLines([]);
-    setHeader({ order_date: new Date().toISOString().slice(0, 10), discount: 0 });
+    setHeader({ order_date: new Date().toISOString().slice(0, 10), discount: 0, channel: "direct" });
     setOpen(true);
   };
 
@@ -72,7 +96,17 @@ export default function Orders() {
     setOpen(true);
   };
 
-  const priceFor = (productId: string, tierId?: string | null) => {
+  // Ưu tiên: giá theo khổ (đúng kênh + cấp KH) → giá theo khổ gốc kênh → giá cấp KH cũ → giá cơ bản
+  const priceFor = (productId: string, tierId?: string | null, sizeId?: string | null, channel?: string) => {
+    const ch = channel ?? header.channel ?? "direct";
+    if (sizeId) {
+      if (tierId) {
+        const sp = sizePrices.find((p) => p.product_id === productId && p.size_id === sizeId && p.tier_id === tierId && p.channel === ch);
+        if (sp) return Number(sp.sale_price);
+      }
+      const spBase = sizePrices.find((p) => p.product_id === productId && p.size_id === sizeId && p.tier_id === null && p.channel === ch);
+      if (spBase) return Number(spBase.sale_price);
+    }
     if (tierId) {
       const pp = prices.find((p) => p.product_id === productId && p.tier_id === tierId);
       if (pp) return Number(pp.price);
@@ -84,11 +118,10 @@ export default function Orders() {
   const onCustomerChange = (id: string) => {
     const c = customers.find((x) => x.id === id);
     setHeader((h) => ({ ...h, customer_id: id, tier_id: c?.tier_id ?? null }));
-    // recompute unit_price on existing draft lines
-    setLines((ls) => ls.map((l) => ({ ...l, unit_price: priceFor(l.product_id, c?.tier_id) })));
+    setLines((ls) => ls.map((l) => ({ ...l, unit_price: priceFor(l.product_id, c?.tier_id, l.print_size_id) })));
   };
 
-  const addLine = () => setLines((ls) => [...ls, { product_id: products[0]?.id, quantity: 1, unit_price: priceFor(products[0]?.id, header.tier_id) }]);
+  const addLine = () => setLines((ls) => [...ls, { product_id: products[0]?.id, print_size_id: null, quantity: 1, unit_price: priceFor(products[0]?.id, header.tier_id) }]);
 
   const save = async () => {
     if (!header.customer_id) { toast.error("Chọn khách hàng"); return; }
@@ -103,6 +136,7 @@ export default function Orders() {
           code: codeData!, customer_id: header.customer_id!, tier_id: header.tier_id ?? null,
           order_date: header.order_date!, delivery_date: header.delivery_date ?? null,
           discount: header.discount ?? 0, notes: header.notes ?? null, status: "draft",
+          channel: header.channel ?? "direct",
         }).select().single();
         if (error) throw error;
         orderId = data.id;
@@ -110,6 +144,7 @@ export default function Orders() {
         const { error } = await supabase.from("orders").update({
           customer_id: header.customer_id!, tier_id: header.tier_id ?? null,
           delivery_date: header.delivery_date ?? null, discount: header.discount ?? 0, notes: header.notes ?? null,
+          channel: header.channel ?? "direct",
         }).eq("id", orderId);
         if (error) throw error;
         await supabase.from("order_items").delete().eq("order_id", orderId);
@@ -118,6 +153,7 @@ export default function Orders() {
         order_id: orderId!, product_id: l.product_id, quantity: l.quantity,
         unit_price: l.unit_price, line_total: l.quantity * l.unit_price,
         width_cm: l.width_cm ?? null, height_cm: l.height_cm ?? null,
+        print_size_id: l.print_size_id ?? null,
       }));
       const { error: e2 } = await supabase.from("order_items").insert(rows);
       if (e2) throw e2;
@@ -146,6 +182,16 @@ export default function Orders() {
     if (error) return toast.error(error.message);
     await logActivity({ action: "deliver", entity_table: "orders", entity_id: o.id, before_data: { status: o.status }, after_data: { status: "delivered" } });
     toast.success("Đã chuyển sang Đã giao"); load();
+  };
+
+  const advanceStep = async (o: Order) => {
+    const step = WORKFLOW.find((w) => w.status === o.status);
+    if (!step?.next) return;
+    if (!window.confirm(`${step.nextLabel} cho đơn ${o.code}?`)) return;
+    const { error } = await supabase.from("orders").update({ status: step.next as any }).eq("id", o.id);
+    if (error) return toast.error(error.message);
+    await logActivity({ action: "advance_step", entity_table: "orders", entity_id: o.id, before_data: { status: o.status }, after_data: { status: step.next } });
+    toast.success(`Đã chuyển: ${step.nextLabel}`); load();
   };
 
   const printOrder = async (o: Order) => {
@@ -208,9 +254,9 @@ export default function Orders() {
                     <TableCell className="text-right">{Number(o.total_amount).toLocaleString("vi-VN")}</TableCell>
                     <TableCell><Badge variant={statusColor[o.status] as any}>{statusLabel[o.status]}</Badge></TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()} className="text-right space-x-1">
-                      {canManage && o.status === "draft" && (
-                        <Button size="sm" variant="outline" onClick={() => confirmOrder(o.id)}><Check className="h-3 w-3 mr-1" />Xác nhận</Button>
-                      )}
+                      {(() => { const step = WORKFLOW.find((w) => w.status === o.status); return canManage && step?.next && (
+                        <Button size="sm" variant="outline" onClick={() => advanceStep(o)}><Check className="h-3 w-3 mr-1" />{step.nextLabel}</Button>
+                      ); })()}
                       {canManage && o.status === "confirmed" && (
                         <Button size="sm" variant="outline" onClick={() => toProduction(o.id)}><Factory className="h-3 w-3 mr-1" />Sản xuất</Button>
                       )}
@@ -240,6 +286,12 @@ export default function Orders() {
               <div><Label>Cấp giá</Label>
                 <div className="h-10 px-3 flex items-center text-sm border rounded-md">{tiers.find(t => t.id === header.tier_id)?.name ?? "Mặc định"}</div>
               </div>
+              <div><Label>Kênh bán</Label>
+                <Select value={header.channel ?? "direct"} onValueChange={(v) => { setHeader({ ...header, channel: v }); setLines((ls) => ls.map((l) => ({ ...l, unit_price: priceFor(l.product_id, header.tier_id, l.print_size_id, v) }))); }} disabled={current?.status !== "draft" && !!current}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{CHANNELS.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
               <div><Label>Ngày đặt</Label><Input type="date" value={header.order_date ?? ""} onChange={(e) => setHeader({ ...header, order_date: e.target.value })} /></div>
               <div><Label>Ngày giao</Label><Input type="date" value={header.delivery_date ?? ""} onChange={(e) => setHeader({ ...header, delivery_date: e.target.value })} /></div>
               <div><Label>Chiết khấu</Label><Input type="number" value={header.discount ?? 0} onChange={(e) => setHeader({ ...header, discount: num(e.target.value) })} /></div>
@@ -253,7 +305,7 @@ export default function Orders() {
               </div>
               <Table>
                 <TableHeader><TableRow>
-                  <TableHead>Sản phẩm</TableHead><TableHead className="w-20">SL</TableHead>
+                  <TableHead>Sản phẩm</TableHead><TableHead className="w-36">Khổ in</TableHead><TableHead className="w-20">SL</TableHead>
                   <TableHead className="w-28">Đơn giá</TableHead><TableHead className="text-right w-32">Thành tiền</TableHead><TableHead className="w-10"></TableHead>
                 </TableRow></TableHeader>
                 <TableBody>
@@ -261,10 +313,24 @@ export default function Orders() {
                     <TableRow key={i}>
                       <TableCell>
                         <Select value={l.product_id} onValueChange={(v) => {
-                          const np = [...lines]; np[i].product_id = v; np[i].unit_price = priceFor(v, header.tier_id); setLines(np);
+                          const np = [...lines]; np[i].product_id = v; np[i].unit_price = priceFor(v, header.tier_id, np[i].print_size_id); setLines(np);
                         }}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>{products.map((p) => <SelectItem key={p.id} value={p.id}>{p.code} — {p.name}</SelectItem>)}</SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Select value={l.print_size_id ?? "none"} onValueChange={(v) => {
+                          const sid = v === "none" ? null : v;
+                          const np = [...lines]; np[i].print_size_id = sid;
+                          np[i].unit_price = priceFor(np[i].product_id, header.tier_id, sid);
+                          setLines(np);
+                        }}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">— Tự do —</SelectItem>
+                            {sizes.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                          </SelectContent>
                         </Select>
                       </TableCell>
                       <TableCell><Input type="number" value={l.quantity} onChange={(e) => { const np = [...lines]; np[i].quantity = num(e.target.value); setLines(np); }} /></TableCell>

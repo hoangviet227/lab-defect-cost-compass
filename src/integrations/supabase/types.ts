@@ -647,6 +647,7 @@ export type Database = {
           line_total: number
           notes: string | null
           order_id: string
+          print_size_id: string | null
           product_id: string
           quantity: number
           unit_price: number
@@ -659,6 +660,7 @@ export type Database = {
           line_total?: number
           notes?: string | null
           order_id: string
+          print_size_id?: string | null
           product_id: string
           quantity: number
           unit_price?: number
@@ -671,6 +673,7 @@ export type Database = {
           line_total?: number
           notes?: string | null
           order_id?: string
+          print_size_id?: string | null
           product_id?: string
           quantity?: number
           unit_price?: number
@@ -685,6 +688,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "order_items_print_size_id_fkey"
+            columns: ["print_size_id"]
+            isOneToOne: false
+            referencedRelation: "print_sizes"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "order_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
@@ -695,6 +705,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          channel: string
           code: string
           confirmed_at: string | null
           confirmed_by: string | null
@@ -708,6 +719,7 @@ export type Database = {
           id: string
           notes: string | null
           order_date: string
+          print_size_id: string | null
           source: string
           status: Database["public"]["Enums"]["order_status"]
           subtotal: number
@@ -716,6 +728,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          channel?: string
           code: string
           confirmed_at?: string | null
           confirmed_by?: string | null
@@ -729,6 +742,7 @@ export type Database = {
           id?: string
           notes?: string | null
           order_date?: string
+          print_size_id?: string | null
           source?: string
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
@@ -737,6 +751,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          channel?: string
           code?: string
           confirmed_at?: string | null
           confirmed_by?: string | null
@@ -750,6 +765,7 @@ export type Database = {
           id?: string
           notes?: string | null
           order_date?: string
+          print_size_id?: string | null
           source?: string
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
@@ -771,6 +787,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_customer_debts"
             referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "orders_print_size_id_fkey"
+            columns: ["print_size_id"]
+            isOneToOne: false
+            referencedRelation: "print_sizes"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "orders_tier_id_fkey"
@@ -895,6 +918,45 @@ export type Database = {
           },
         ]
       }
+      print_sizes: {
+        Row: {
+          code: string
+          created_at: string
+          height_cm: number | null
+          id: string
+          is_active: boolean
+          name: string
+          note: string | null
+          sort_order: number
+          updated_at: string
+          width_cm: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          height_cm?: number | null
+          id?: string
+          is_active?: boolean
+          name: string
+          note?: string | null
+          sort_order?: number
+          updated_at?: string
+          width_cm?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          height_cm?: number | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          note?: string | null
+          sort_order?: number
+          updated_at?: string
+          width_cm?: number | null
+        }
+        Relationships: []
+      }
       product_bom: {
         Row: {
           created_at: string
@@ -1008,6 +1070,64 @@ export type Database = {
           },
           {
             foreignKeyName: "product_prices_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "customer_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_size_prices: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          product_id: string
+          production_cost: number
+          sale_price: number
+          size_id: string
+          tier_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          id?: string
+          product_id: string
+          production_cost?: number
+          sale_price?: number
+          size_id: string
+          tier_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          production_cost?: number
+          sale_price?: number
+          size_id?: string
+          tier_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_size_prices_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_size_prices_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "print_sizes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_size_prices_tier_id_fkey"
             columns: ["tier_id"]
             isOneToOne: false
             referencedRelation: "customer_tiers"
@@ -1834,6 +1954,7 @@ export type Database = {
       confirm_order: {
         Args: { _order_id: string }
         Returns: {
+          channel: string
           code: string
           confirmed_at: string | null
           confirmed_by: string | null
@@ -1847,6 +1968,7 @@ export type Database = {
           id: string
           notes: string | null
           order_date: string
+          print_size_id: string | null
           source: string
           status: Database["public"]["Enums"]["order_status"]
           subtotal: number
@@ -1961,6 +2083,10 @@ export type Database = {
         | "in_production"
         | "delivered"
         | "cancelled"
+        | "design"
+        | "approved"
+        | "printing"
+        | "packing"
       production_status: "pending" | "in_progress" | "completed" | "cancelled"
       purchase_receipt_status: "draft" | "confirmed" | "cancelled"
       stock_issue_status: "draft" | "confirmed" | "cancelled"
@@ -2109,6 +2235,10 @@ export const Constants = {
         "in_production",
         "delivered",
         "cancelled",
+        "design",
+        "approved",
+        "printing",
+        "packing",
       ],
       production_status: ["pending", "in_progress", "completed", "cancelled"],
       purchase_receipt_status: ["draft", "confirmed", "cancelled"],
