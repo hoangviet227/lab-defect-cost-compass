@@ -8,6 +8,13 @@
       "when": 1792290242518,
       "tag": "0000_print_sizes_and_size_prices",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792290325490,
+      "tag": "0001_order_workflow_steps",
+      "breakpoints": true
     }
   ]
 }

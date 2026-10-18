@@ -647,6 +647,7 @@ export type Database = {
           line_total: number
           notes: string | null
           order_id: string
+          print_size_id: string | null
           product_id: string
           quantity: number
           unit_price: number
@@ -659,6 +660,7 @@ export type Database = {
           line_total?: number
           notes?: string | null
           order_id: string
+          print_size_id?: string | null
           product_id: string
           quantity: number
           unit_price?: number
@@ -671,6 +673,7 @@ export type Database = {
           line_total?: number
           notes?: string | null
           order_id?: string
+          print_size_id?: string | null
           product_id?: string
           quantity?: number
           unit_price?: number
@@ -685,6 +688,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "order_items_print_size_id_fkey"
+            columns: ["print_size_id"]
+            isOneToOne: false
+            referencedRelation: "print_sizes"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "order_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
@@ -695,6 +705,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          channel: string
           code: string
           confirmed_at: string | null
           confirmed_by: string | null
@@ -708,6 +719,7 @@ export type Database = {
           id: string
           notes: string | null
           order_date: string
+          print_size_id: string | null
           source: string
           status: Database["public"]["Enums"]["order_status"]
           subtotal: number
@@ -716,6 +728,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          channel?: string
           code: string
           confirmed_at?: string | null
           confirmed_by?: string | null
@@ -729,6 +742,7 @@ export type Database = {
           id?: string
           notes?: string | null
           order_date?: string
+          print_size_id?: string | null
           source?: string
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
@@ -737,6 +751,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          channel?: string
           code?: string
           confirmed_at?: string | null
           confirmed_by?: string | null
@@ -750,6 +765,7 @@ export type Database = {
           id?: string
           notes?: string | null
           order_date?: string
+          print_size_id?: string | null
           source?: string
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
@@ -771,6 +787,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_customer_debts"
             referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "orders_print_size_id_fkey"
+            columns: ["print_size_id"]
+            isOneToOne: false
+            referencedRelation: "print_sizes"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "orders_tier_id_fkey"
@@ -1931,6 +1954,7 @@ export type Database = {
       confirm_order: {
         Args: { _order_id: string }
         Returns: {
+          channel: string
           code: string
           confirmed_at: string | null
           confirmed_by: string | null
@@ -1944,6 +1968,7 @@ export type Database = {
           id: string
           notes: string | null
           order_date: string
+          print_size_id: string | null
           source: string
           status: Database["public"]["Enums"]["order_status"]
           subtotal: number
@@ -2058,6 +2083,10 @@ export type Database = {
         | "in_production"
         | "delivered"
         | "cancelled"
+        | "design"
+        | "approved"
+        | "printing"
+        | "packing"
       production_status: "pending" | "in_progress" | "completed" | "cancelled"
       purchase_receipt_status: "draft" | "confirmed" | "cancelled"
       stock_issue_status: "draft" | "confirmed" | "cancelled"
@@ -2206,6 +2235,10 @@ export const Constants = {
         "in_production",
         "delivered",
         "cancelled",
+        "design",
+        "approved",
+        "printing",
+        "packing",
       ],
       production_status: ["pending", "in_progress", "completed", "cancelled"],
       purchase_receipt_status: ["draft", "confirmed", "cancelled"],
