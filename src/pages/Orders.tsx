@@ -96,7 +96,17 @@ export default function Orders() {
     setOpen(true);
   };
 
-  const priceFor = (productId: string, tierId?: string | null) => {
+  // Ưu tiên: giá theo khổ (đúng kênh + cấp KH) → giá theo khổ gốc kênh → giá cấp KH cũ → giá cơ bản
+  const priceFor = (productId: string, tierId?: string | null, sizeId?: string | null, channel?: string) => {
+    const ch = channel ?? header.channel ?? "direct";
+    if (sizeId) {
+      if (tierId) {
+        const sp = sizePrices.find((p) => p.product_id === productId && p.size_id === sizeId && p.tier_id === tierId && p.channel === ch);
+        if (sp) return Number(sp.sale_price);
+      }
+      const spBase = sizePrices.find((p) => p.product_id === productId && p.size_id === sizeId && p.tier_id === null && p.channel === ch);
+      if (spBase) return Number(spBase.sale_price);
+    }
     if (tierId) {
       const pp = prices.find((p) => p.product_id === productId && p.tier_id === tierId);
       if (pp) return Number(pp.price);
@@ -108,11 +118,10 @@ export default function Orders() {
   const onCustomerChange = (id: string) => {
     const c = customers.find((x) => x.id === id);
     setHeader((h) => ({ ...h, customer_id: id, tier_id: c?.tier_id ?? null }));
-    // recompute unit_price on existing draft lines
-    setLines((ls) => ls.map((l) => ({ ...l, unit_price: priceFor(l.product_id, c?.tier_id) })));
+    setLines((ls) => ls.map((l) => ({ ...l, unit_price: priceFor(l.product_id, c?.tier_id, l.print_size_id) })));
   };
 
-  const addLine = () => setLines((ls) => [...ls, { product_id: products[0]?.id, quantity: 1, unit_price: priceFor(products[0]?.id, header.tier_id) }]);
+  const addLine = () => setLines((ls) => [...ls, { product_id: products[0]?.id, print_size_id: null, quantity: 1, unit_price: priceFor(products[0]?.id, header.tier_id) }]);
 
   const save = async () => {
     if (!header.customer_id) { toast.error("Chọn khách hàng"); return; }
