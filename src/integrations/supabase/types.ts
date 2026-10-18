@@ -895,6 +895,45 @@ export type Database = {
           },
         ]
       }
+      print_sizes: {
+        Row: {
+          code: string
+          created_at: string
+          height_cm: number | null
+          id: string
+          is_active: boolean
+          name: string
+          note: string | null
+          sort_order: number
+          updated_at: string
+          width_cm: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          height_cm?: number | null
+          id?: string
+          is_active?: boolean
+          name: string
+          note?: string | null
+          sort_order?: number
+          updated_at?: string
+          width_cm?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          height_cm?: number | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          note?: string | null
+          sort_order?: number
+          updated_at?: string
+          width_cm?: number | null
+        }
+        Relationships: []
+      }
       product_bom: {
         Row: {
           created_at: string
@@ -1008,6 +1047,64 @@ export type Database = {
           },
           {
             foreignKeyName: "product_prices_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "customer_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_size_prices: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          product_id: string
+          production_cost: number
+          sale_price: number
+          size_id: string
+          tier_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          id?: string
+          product_id: string
+          production_cost?: number
+          sale_price?: number
+          size_id: string
+          tier_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          production_cost?: number
+          sale_price?: number
+          size_id?: string
+          tier_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_size_prices_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_size_prices_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "print_sizes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_size_prices_tier_id_fkey"
             columns: ["tier_id"]
             isOneToOne: false
             referencedRelation: "customer_tiers"
